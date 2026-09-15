@@ -1,8 +1,10 @@
 UART_DIR = UART/
 I2C_DIR = I2C/
+SPI_DIR = SPI/
 Communication_PATH = $(SRC_PATH)Driver/Config/Communication/
 UART_PATH = $(Communication_PATH)$(UART_DIR)
 I2C_PATH = $(Communication_PATH)$(I2C_DIR)
+SPI_PATH = $(Communication_PATH)$(SPI_DIR)
 Communication_OBJ_PATH = $(BUILD_RESULT_PATH_DRIVER)Communication/
 UART_INC = \
 	-I$(GPIO_PATH) \
@@ -17,6 +19,13 @@ I2C_INC = \
 	-I$(DMA_PATH) \
 	-I$(INTERRUPT_PATH) \
 	-I$(DELAY_US_PATH) \
+	-I$(STATIC_INIT_PATH) \
+	-I$(REGISTERS_PATH) \
+	-I$(GENERAL_HEADERS_PATH)
+SPI_INC = \
+	-I$(GPIO_PATH) \
+	-I$(DMA_PATH) \
+	-I$(INTERRUPT_PATH) \
 	-I$(STATIC_INIT_PATH) \
 	-I$(REGISTERS_PATH) \
 	-I$(GENERAL_HEADERS_PATH)

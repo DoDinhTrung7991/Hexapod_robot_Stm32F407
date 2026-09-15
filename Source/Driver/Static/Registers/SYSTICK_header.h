@@ -11,7 +11,7 @@ typedef struct SYSTICK_str
 	volatile uint32_t CALIB;
 } SYSTICK_t;
 
-extern SYSTICK_t *SYSTICK_reg;
+#define SYSTICK_reg ((SYSTICK_t *)0xE000E010UL)
 
 #endif
 

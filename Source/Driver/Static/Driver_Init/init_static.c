@@ -4,13 +4,12 @@
 #include "SYSTICK_header.h"
 #include "RCC_header.h"
 #include "PWR_header.h"
+#include "FP_header.h"
 #include "init_static.h"
 
 #define VECTKEY_WRITE 0x05FAUL
 #define VECTKEY_READ 0xFA05UL
 
-SYSTICK_t *SYSTICK_reg = (SYSTICK_t *)0xE000E010;
-RCC_t * RCC_reg = (RCC_t *)0x40023800;
 unsigned int SysClock_Freq = HSI_VALUE;
 unsigned int AHB_freq = HSI_VALUE;
 unsigned int APB1_freq = 0U;
@@ -25,6 +24,19 @@ static uint8_t flashLatency_Setup(unsigned int SysClock_Freq_param);
 
 bool initConfig(priConf_t priConf_st, oscillatorConf_t oscillatorConf_st, clockConf_t clockConf_st)
 {
+	// Full access for Coprocessor
+	WRITE_REG(SCB_reg->CPACR, 0xFUL, 20U, 0xFUL);
+	// Set ASPEN and LSPEN
+	WRITE_REG(FP_reg->FPCCR, 0x3UL, 30U, 0x3UL);
+
+	// DSB (Data Synchronization Barrier):
+	// Make sure data written into SCB_reg->CPACR done 100%
+	__asm__ volatile ("dsb 0xF" ::: "memory");
+	// ISB (Instruction Synchronization Barrier):
+	// Xóa sạch Pipeline của CPU, nạp lại các lệnh phía sau.
+	// Đảm bảo các lệnh FPU tiếp theo nhận biết FPU đã bật.
+	__asm__ volatile ("isb 0xF" ::: "memory");
+
 	if (OK != oscSetup(oscillatorConf_st))
 	{
 		return NOT_OK;

@@ -20,6 +20,6 @@ typedef struct NVIC_str
 	volatile uint32_t STIR;
 } NVIC_t;
 
-NVIC_t *NVIC_reg = (NVIC_t*)0xE000E100;
+#define NVIC_reg ((NVIC_t*)0xE000E100UL)
 
 #endif

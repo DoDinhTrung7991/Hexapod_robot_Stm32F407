@@ -24,6 +24,8 @@ DMA_t *DMA_reg[2] =
 	(DMA_t*)0x40026400
 };
 
+static unsigned int RCC_APBxENR_DMA_pos_arr[2] = {21U, 22U};
+
 static void Enable_DMA_interruptLine(stream_channel_t Stream_info_st);
 
 bool DMA_direct_init(DMA_direct_param_t DMA_direct_param_st)
@@ -36,18 +38,7 @@ bool DMA_direct_init(DMA_direct_param_t DMA_direct_param_st)
 	}
 
 	// Enable Clock
-	if (DMA1 == DMA_direct_param_st.Stream_info_st.DMAx)
-	{
-		SET_BIT(RCC_reg->AHB1ENR, 21U);
-	}
-	else if (DMA2 == DMA_direct_param_st.Stream_info_st.DMAx)
-	{
-		SET_BIT(RCC_reg->AHB1ENR, 22U);
-	}
-	else
-	{
-		return NOT_OK;
-	}
+	SET_BIT(RCC_reg->AHB1ENR, RCC_APBxENR_DMA_pos_arr[DMA_direct_param_st.Stream_info_st.DMAx]);
 
 	//Reset DMA_SxCR
 	DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].CR = 0UL;
@@ -171,18 +162,7 @@ bool DMA_FIFO_init(DMA_FIFO_param_t DMA_FIFO_param_st)
 	}
 
 	// Enable Clock
-	if (DMA1 == DMA_FIFO_param_st.Stream_info_st.DMAx)
-	{
-		SET_BIT(RCC_reg->AHB1ENR, 21U);
-	}
-	else if (DMA2 == DMA_FIFO_param_st.Stream_info_st.DMAx)
-	{
-		SET_BIT(RCC_reg->AHB1ENR, 22U);
-	}
-	else
-	{
-		return NOT_OK;
-	}
+	SET_BIT(RCC_reg->AHB1ENR, RCC_APBxENR_DMA_pos_arr[DMA_FIFO_param_st.Stream_info_st.DMAx]);
 
 	//Reset DMA_SxCR
 	DMA_reg[DMA_FIFO_param_st.Stream_info_st.DMAx]->S[DMA_FIFO_param_st.Stream_info_st.stream].CR = 0UL;

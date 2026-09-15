@@ -1,3 +1,6 @@
+#ifndef INC_DMA_H_
+#define INC_DMA_H_
+
 #include "stdUtility.h"
 #include "bit_operator.h"
 #include "DMA_header.h"
@@ -168,3 +171,5 @@ typedef struct
 bool DMA_direct_init(DMA_direct_param_t DMA_direct_param_st);
 bool DMA_FIFO_init(DMA_FIFO_param_t DMA_FIFO_param_st);
 void DMA_transfer(stream_channel_t Stream_info_st, buffer_t buffer_info_st);
+
+#endif

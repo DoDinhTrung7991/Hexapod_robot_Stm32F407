@@ -13,8 +13,7 @@ typedef struct EXTI_str
 	volatile uint32_t PR;
 } EXTI_t;
 
-extern EXTI_t *EXTI_reg;
-//EXTI_t *EXTI_reg = (EXTI_t*)0x40013C00;
+#define EXTI_reg ((EXTI_t*)0x40013C00UL)
 
 #endif
 

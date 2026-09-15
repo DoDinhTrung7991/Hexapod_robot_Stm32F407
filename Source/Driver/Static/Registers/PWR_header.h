@@ -16,6 +16,6 @@ typedef struct PWR_str
 	volatile uint32_t CSR;
 } PWR_t;
 
-PWR_t *PWR_reg = (PWR_t *)0x40007000;
+#define PWR_reg ((PWR_t *)0x40007000UL)
 
 #endif /* INC_PWR_HEADER_H_ */

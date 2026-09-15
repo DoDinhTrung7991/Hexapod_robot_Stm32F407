@@ -8,7 +8,7 @@
 
 typedef struct queue_st
 {
-	uint16_t buf[ARR_SIZE];
+	volatile uint8_t buf[ARR_SIZE];
 	uint8_t front;
 	uint8_t rear;
 	bool overrun;
@@ -17,8 +17,9 @@ typedef struct queue_st
 } queue_t;
 
 void queue_init(queue_t* queue_ptr);
-void queue_enqueue(queue_t* queue_ptr, uint16_t arg);
-uint8_t queue_dequeue(queue_t* queue_ptr, uint16_t* buffer_ptr, uint8_t numToDequeue);
+void queue_enqueue(queue_t* queue_ptr, uint8_t* str_ptr, uint8_t numToEnqueue);
+uint8_t queue_dequeue(queue_t* queue_ptr, uint8_t* str_ptr, uint8_t numToDequeue);
 uint8_t queue_get_size(queue_t* queue_ptr);
+void queue_clear_overrun(queue_t* queue_ptr);
 
 #endif

@@ -24,11 +24,14 @@ typedef struct SCB_str
 	volatile uint32_t SHCSR;
 	volatile uint32_t CFSR;
 	volatile uint32_t HFSR;
+	volatile uint32_t DFSR; // RESERVED_DEBUG
 	volatile uint32_t MMAR;
 	volatile uint32_t BFAR;
 	volatile uint32_t AFSR;
+	uint32_t Reserve0[18];
+	volatile uint32_t CPACR;    // 0xE000ED88
 } SCB_t;
 
-SCB_t *SCB_reg = (SCB_t *)0xE000ED00;
+#define SCB_reg ((SCB_t *)0xE000ED00UL)
 
 #endif /* INC_SCB_HEADER_H_ */

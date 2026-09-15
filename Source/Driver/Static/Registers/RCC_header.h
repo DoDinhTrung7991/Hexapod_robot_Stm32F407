@@ -48,7 +48,6 @@ typedef struct RCC_str
 	volatile uint32_t PLLI2SCFGR;
 } RCC_t;
 
-extern RCC_t * RCC_reg;
-// RCC_t * RCC_reg = (RCC_t *)0x40023800;
+#define RCC_reg ((RCC_t *)0x40023800UL)
 
 #endif /* INC_RCC_HEADER_H_ */

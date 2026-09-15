@@ -5,7 +5,6 @@
 #include "Interrupt.h"
 #include "init_static.h"
 
-WWDG_t *WWDG_reg = (WWDG_t *)0x40002C00;
 const uint32_t WWDG_prescaler_u8[4] = {1, 2, 4, 8};
 
 bool WWDG_init(WWDG_prescaler_t prescaler, uint8_t timeoutMS_u8, uint8_t earlyFail_thresholdMS_u8)

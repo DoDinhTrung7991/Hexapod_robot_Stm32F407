@@ -6,7 +6,7 @@ bool SystemInit(void)
 
 	priConf_t priConf_st = {
 		.priGroupField = PRIGROUP_4, // 3 bits for group priority, 1 for sub-priority
-		.systickFreq = 100U
+		.systickFreq = 100U // SysTick_cnt_u32 = 10ms/cycle
 	};
 	
 	oscillatorConf_t oscillatorConf_st = {

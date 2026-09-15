@@ -7,8 +7,6 @@
 #define WATCHDOG_RESET 0xAAAAUL
 #define WATCHDOG_WR_ENABLE 0x5555UL
 
-IWDG_t *IWDG_reg = (IWDG_t *)0x40003000;
-
 bool IWDG_init(IWDG_timeout_t timeout)
 {
     uint32_t timeStart_u32;

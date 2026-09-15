@@ -11,4 +11,6 @@ typedef struct IWDG_str
     volatile uint32_t SR;
 } IWDG_t;
 
+#define IWDG_reg ((IWDG_t *)0x40003000UL)
+
 #endif

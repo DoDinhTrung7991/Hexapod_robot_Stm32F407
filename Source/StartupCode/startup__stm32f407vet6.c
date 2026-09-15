@@ -51,9 +51,9 @@ void EXTI3_Handler(void);
 void EXTI4_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void DMA1_Stream0_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void DMA1_Stream1_Handler(void);
-__attribute__((weak, alias("Default_Handler")))void DMA1_Stream2_Handler(void);
-__attribute__((weak, alias("Default_Handler")))void DMA1_Stream3_Handler(void);
-__attribute__((weak, alias("Default_Handler")))void DMA1_Stream4_Handler(void);
+void DMA1_Stream2_Handler(void);
+void DMA1_Stream3_Handler(void);
+void DMA1_Stream4_Handler(void);
 void DMA1_Stream5_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void DMA1_Stream6_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void ADC_Handler(void);
@@ -94,10 +94,10 @@ __attribute__((weak, alias("Default_Handler")))void UART4_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void UART5_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void TIM6_DAC_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void TIM7_Handler(void);
-__attribute__((weak, alias("Default_Handler")))void DMA2_Stream0_Handler(void);
+void DMA2_Stream0_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void DMA2_Stream1_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void DMA2_Stream2_Handler(void);
-__attribute__((weak, alias("Default_Handler")))void DMA2_Stream3_Handler(void);
+void DMA2_Stream3_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void DMA2_Stream4_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void ETH_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void ETH_WKUP_Handler(void);
@@ -300,6 +300,13 @@ void USART1_Handler(void)
         UART_recv_buf[USART1].isEmpty = false;
         UART_recv_buf[USART1].rear = (uint8_t)(ARR_SIZE - DMA_reg[DMA2]->S[5].NDTR);
         isUpdated_UART[USART1] = true;
+
+        if (NOT_INITTED == UART_init_state[USART1])
+        {
+            // Disable Receiver
+	        CLEAR_BIT(USART_reg[USART1]->CR1, 2U);
+        }
+
         UART_state_rx[USART1] = UART_STATE_READY;
         (void)temp;
     }
@@ -450,6 +457,67 @@ void I2C1_ER_Handler(void)
     }
 }
 
+void DMA1_Stream2_Handler(void)
+{
+    if (READ_REG(DMA_reg[DMA1]->ISR[0], 1UL, 21U))
+    {
+        SET_BIT(DMA_reg[DMA1]->IFCR[0], 21U);
+
+        if (I2C_STATE_BUSY == I2C_state_rx[I2C3])
+        {
+            // Set Buffer interrupt enable
+            SET_BIT(I2C_reg[I2C3]->CR2, 10U);
+            // DMA requests disable
+            CLEAR_BIT(I2C_reg[I2C3]->CR2, 11U);
+        }
+    }
+
+    if (READ_REG(DMA_reg[DMA1]->ISR[0], 1UL, 18U))
+    {
+        SET_BIT(DMA_reg[DMA1]->IFCR[0], 18U);
+    }
+}
+
+void DMA1_Stream3_Handler(void)
+{
+    if (READ_REG(DMA_reg[DMA1]->ISR[0], 1UL, 27U))
+    {
+        SET_BIT(DMA_reg[DMA1]->IFCR[0], 27U);
+
+        if (I2C_STATE_BUSY == I2C_state_rx[I2C2])
+        {
+            // Set Buffer interrupt enable
+            SET_BIT(I2C_reg[I2C2]->CR2, 10U);
+            // DMA requests disable
+            CLEAR_BIT(I2C_reg[I2C2]->CR2, 11U);
+        }
+    }
+
+    if (READ_REG(DMA_reg[DMA1]->ISR[0], 1UL, 24U))
+    {
+        SET_BIT(DMA_reg[DMA1]->IFCR[0], 24U);
+    }
+}
+
+void DMA1_Stream4_Handler(void)
+{
+    if (READ_REG(DMA_reg[DMA1]->ISR[1], 1UL, 5U))
+    {
+        SET_BIT(DMA_reg[DMA1]->IFCR[1], 5U);
+
+        if (I2C_STATE_BUSY == I2C_state_tx[I2C3])
+        {
+            // DMA requests disable
+            CLEAR_BIT(I2C_reg[I2C3]->CR2, 11U);
+        }
+    }
+
+    if (READ_REG(DMA_reg[DMA1]->ISR[1], 1UL, 2U))
+    {
+        SET_BIT(DMA_reg[DMA1]->IFCR[1], 2U);
+    }
+}
+
 void DMA1_Stream5_Handler(void)
 {
     if (READ_REG(DMA_reg[DMA1]->ISR[1], 1UL, 11U))
@@ -482,11 +550,43 @@ void DMA1_Stream7_Handler(void)
             // DMA requests disable
             CLEAR_BIT(I2C_reg[I2C1]->CR2, 11U);
         }
+
+        if (I2C_STATE_BUSY == I2C_state_tx[I2C2])
+        {
+            // DMA requests disable
+            CLEAR_BIT(I2C_reg[I2C2]->CR2, 11U);
+        }
     }
 
     if (READ_REG(DMA_reg[DMA1]->ISR[1], 1UL, 24U))
     {
         SET_BIT(DMA_reg[DMA1]->IFCR[1], 24U);
+    }
+}
+
+void DMA2_Stream0_Handler(void)
+{
+    if (READ_REG(DMA_reg[DMA2]->ISR[0], 1UL, 5U))
+    {
+        SET_BIT(DMA_reg[DMA2]->IFCR[0], 5U);
+    }
+
+    if (READ_REG(DMA_reg[DMA2]->ISR[0], 1UL, 2U))
+    {
+        SET_BIT(DMA_reg[DMA2]->IFCR[0], 2U);
+    }
+}
+
+void DMA2_Stream3_Handler(void)
+{
+    if (READ_REG(DMA_reg[DMA2]->ISR[0], 1UL, 27U))
+    {
+        SET_BIT(DMA_reg[DMA2]->IFCR[0], 27U);
+    }
+
+    if (READ_REG(DMA_reg[DMA2]->ISR[0], 1UL, 24U))
+    {
+        SET_BIT(DMA_reg[DMA2]->IFCR[0], 24U);
     }
 }
 

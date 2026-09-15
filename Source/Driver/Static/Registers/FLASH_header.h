@@ -20,6 +20,6 @@ typedef struct FLASH_str
 	volatile uint32_t OPTCR;
 } FLASH_t;
 
-FLASH_t *FLASH_reg = (FLASH_t *)0x40023C00;
+#define FLASH_reg ((FLASH_t *)0x40023C00UL)
 
 #endif /* INC_FLASH_HEADER_H_ */

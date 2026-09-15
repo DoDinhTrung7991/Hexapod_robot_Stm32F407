@@ -11,7 +11,7 @@ typedef struct SYSCFG_str
 	volatile uint32_t CMPCR;
 } SYSCFG_t;
 
-SYSCFG_t *SYSCFG_reg = (SYSCFG_t*)0x40013800;
+#define SYSCFG_reg ((SYSCFG_t*)0x40013800UL)
 
 #endif
 

@@ -12,12 +12,12 @@ OBJCOPY = arm-none-eabi-objcopy
 SIZE = arm-none-eabi-size
 
 # Compiler flags
-COMMON_CFLAGS = -mcpu=cortex-m4 -mthumb -std=gnu11 -ffunction-sections -fdata-sections -Wall
+COMMON_CFLAGS = -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -std=gnu11 -ffunction-sections -fdata-sections -Wall
 CFLAGS = -O2 $(COMMON_CFLAGS)
 CFLAGS_GDB = -O0 -ggdb $(COMMON_CFLAGS)
 
 # Linker flags
-LDFLAGS_COMMON = -mcpu=cortex-m4 -mthumb -Wall -Wl,--gc-sections
+LDFLAGS_COMMON = -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -Wall -Wl,--gc-sections
 LDFLAGS = $(LDFLAGS_COMMON) -T $(SRC_PATH)Linker/linker.ld -Wl,-Map=$(BUILD_RESULT_PATH)final.map
 LDFLAGS_GDB = $(LDFLAGS_COMMON) -T $(SRC_PATH)Linker/linker.ld -Wl,-Map=$(BUILD_RESULT_PATH)final_gdb.map -ggdb
 

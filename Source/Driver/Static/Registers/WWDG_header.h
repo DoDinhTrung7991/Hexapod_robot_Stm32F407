@@ -10,4 +10,6 @@ typedef struct WWDG_str
     volatile uint32_t SR;
 } WWDG_t;
 
+#define WWDG_reg ((WWDG_t *)0x40002C00UL)
+
 #endif

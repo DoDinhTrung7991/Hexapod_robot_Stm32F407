@@ -4,8 +4,6 @@
 #include "EXTI_header.h"
 #include "bit_operator.h"
 
-EXTI_t *EXTI_reg = (EXTI_t*)0x40013C00;
-
 void NVIC_ISER_setVal(peripheral_Selection_t peripheral_Selection_en)
 {
     uint8_t bytePos = peripheral_Selection_en / 32U;
