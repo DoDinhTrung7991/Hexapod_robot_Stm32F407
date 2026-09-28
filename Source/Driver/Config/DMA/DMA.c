@@ -2,15 +2,7 @@
 
 #define INTERRUPT_CLEARMASK 0x3DUL
 
-typedef enum
-{
-	interruptFlag_0or4 = 0,
-	interruptFlag_1or5 = 6,
-	interruptFlag_2or6 = 16,
-	interruptFlag_3or7 = 22
-} clearFlag_shiftBit_t;
-
-const uint8_t clearFlag_shiftBit_arr[4] =
+const static uint8_t clearFlag_shiftBit_arr[4] =
 {
 	interruptFlag_0or4,
 	interruptFlag_1or5,
@@ -18,13 +10,13 @@ const uint8_t clearFlag_shiftBit_arr[4] =
 	interruptFlag_3or7
 };
 
-DMA_t *DMA_reg[2] =
+DMA_t * const DMA_reg[2] =
 {
 	(DMA_t*)0x40026000,
 	(DMA_t*)0x40026400
 };
 
-static unsigned int RCC_APBxENR_DMA_pos_arr[2] = {21U, 22U};
+static unsigned int RCC_AHBxENR_DMA_pos_arr[2] = {21U, 22U};
 
 static void Enable_DMA_interruptLine(stream_channel_t Stream_info_st);
 
@@ -38,7 +30,7 @@ bool DMA_direct_init(DMA_direct_param_t DMA_direct_param_st)
 	}
 
 	// Enable Clock
-	SET_BIT(RCC_reg->AHB1ENR, RCC_APBxENR_DMA_pos_arr[DMA_direct_param_st.Stream_info_st.DMAx]);
+	SET_BIT(RCC_reg->AHB1ENR, RCC_AHBxENR_DMA_pos_arr[DMA_direct_param_st.Stream_info_st.DMAx]);
 
 	//Reset DMA_SxCR
 	DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].CR = 0UL;
@@ -46,10 +38,7 @@ bool DMA_direct_init(DMA_direct_param_t DMA_direct_param_st)
 
 	while (READ_REG(DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].CR, 1UL, 0U))
 	{
-		if (
-			((SysTick_cnt_u32 < timeStart_u32) && (5UL <= (SysTick_cnt_u32 + (0xFFFFFFFFUL - timeStart_u32) + 1)))
-			|| ((SysTick_cnt_u32 >= timeStart_u32) && (5UL <= (SysTick_cnt_u32 - timeStart_u32)))
-		)
+		if (2UL <= (SysTick_cnt_u32 - timeStart_u32))
 		{
 			return NOT_OK;
 		}
@@ -103,14 +92,17 @@ bool DMA_direct_init(DMA_direct_param_t DMA_direct_param_st)
 	switch (DMA_direct_param_st.data_info_st.peri_mode)
 	{
 		case fixed:
+			// PINC: Peripheral increment mode
 			CLEAR_BIT(DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].CR, 9U);
 			break;
 
 		case not_fixed:
+			// PINC: Peripheral increment mode
 			SET_BIT(DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].CR, 9U);
 			break;
 		
 		case circular:
+			// PINC: Peripheral increment mode
 			SET_BIT(DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].CR, 9U);
 			// Circular mode
 			SET_BIT(DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].CR, 8U);
@@ -162,7 +154,7 @@ bool DMA_FIFO_init(DMA_FIFO_param_t DMA_FIFO_param_st)
 	}
 
 	// Enable Clock
-	SET_BIT(RCC_reg->AHB1ENR, RCC_APBxENR_DMA_pos_arr[DMA_FIFO_param_st.Stream_info_st.DMAx]);
+	SET_BIT(RCC_reg->AHB1ENR, RCC_AHBxENR_DMA_pos_arr[DMA_FIFO_param_st.Stream_info_st.DMAx]);
 
 	//Reset DMA_SxCR
 	DMA_reg[DMA_FIFO_param_st.Stream_info_st.DMAx]->S[DMA_FIFO_param_st.Stream_info_st.stream].CR = 0UL;
@@ -170,10 +162,7 @@ bool DMA_FIFO_init(DMA_FIFO_param_t DMA_FIFO_param_st)
 
 	while (READ_REG(DMA_reg[DMA_FIFO_param_st.Stream_info_st.DMAx]->S[DMA_FIFO_param_st.Stream_info_st.stream].CR, 1UL, 0U))
 	{
-		if (
-			((SysTick_cnt_u32 < timeStart_u32) && (5UL <= (SysTick_cnt_u32 + (0xFFFFFFFFUL - timeStart_u32) + 1)))
-			|| ((SysTick_cnt_u32 >= timeStart_u32) && (5UL <= (SysTick_cnt_u32 - timeStart_u32)))
-		)
+		if (2UL <= (SysTick_cnt_u32 - timeStart_u32))
 		{
 			return NOT_OK;
 		}
@@ -295,115 +284,68 @@ bool DMA_FIFO_init(DMA_FIFO_param_t DMA_FIFO_param_st)
 
 void DMA_transfer(stream_channel_t Stream_info_st, buffer_t buffer_info_st)
 {
-	uint32_t timeStart_u32;
-
-	// Disable DMA Stream
-	CLEAR_BIT(DMA_reg[Stream_info_st.DMAx]->S[Stream_info_st.stream].CR, 0U);
-	timeStart_u32 = SysTick_cnt_u32;
-
-	while (READ_REG(DMA_reg[Stream_info_st.DMAx]->S[Stream_info_st.stream].CR, 1UL, 0U))
+	if (READ_REG(DMA_reg[Stream_info_st.DMAx]->S[Stream_info_st.stream].CR, 1UL, 0U))
 	{
-		if (
-			((SysTick_cnt_u32 < timeStart_u32) && (5UL <= (SysTick_cnt_u32 + (0xFFFFFFFFUL - timeStart_u32) + 1)))
-			|| ((SysTick_cnt_u32 >= timeStart_u32) && (5UL <= (SysTick_cnt_u32 - timeStart_u32)))
-		)
+		// Disable DMA Stream
+		CLEAR_BIT(DMA_reg[Stream_info_st.DMAx]->S[Stream_info_st.stream].CR, 0U);
+
+		uint32_t timeStart_u32 = SysTick_cnt_u32;
+
+		while (READ_REG(DMA_reg[Stream_info_st.DMAx]->S[Stream_info_st.stream].CR, 1UL, 0U))
 		{
-			return;
+			if (2UL <= (SysTick_cnt_u32 - timeStart_u32))
+			{
+				return;
+			}
 		}
 	}
+	else
+	{
+		// do nothing
+	}
 
+	Enable_DMA_interruptLine(Stream_info_st);
 	DMA_reg[Stream_info_st.DMAx]->S[Stream_info_st.stream].NDTR = (uint32_t)buffer_info_st.data_length;
 	DMA_reg[Stream_info_st.DMAx]->S[Stream_info_st.stream].PAR = (uint32_t)buffer_info_st.peri_addr;
 	DMA_reg[Stream_info_st.DMAx]->S[Stream_info_st.stream].MAR[0] = (uint32_t)buffer_info_st.mem_addr;
+
+	// Ép xả Write Buffer và giữ đúng trật tự bộ nhớ
+	__DMB();
+
 	// Enable DMA Stream
 	SET_BIT(DMA_reg[Stream_info_st.DMAx]->S[Stream_info_st.stream].CR, 0U);
 }
 
 static void Enable_DMA_interruptLine(stream_channel_t Stream_info_st)
 {
+	static const peripheral_Selection_t DMAx_Interrupt_line[2][8] =
+	{
+		{
+			DMA1_Stream0,
+			DMA1_Stream1,
+			DMA1_Stream2,
+			DMA1_Stream3,
+			DMA1_Stream4,
+			DMA1_Stream5,
+			DMA1_Stream6,
+			DMA1_Stream7
+		},
+		{
+			DMA2_Stream0,
+			DMA2_Stream1,
+			DMA2_Stream2,
+			DMA2_Stream3,
+			DMA2_Stream4,
+			DMA2_Stream5,
+			DMA2_Stream6,
+			DMA2_Stream7
+		}
+	};
+
 	uint8_t pos_u8 = Stream_info_st.stream / 4;
 	uint8_t clearPos_u8 = Stream_info_st.stream % 4;
 
 	WRITE_REG(DMA_reg[Stream_info_st.DMAx]->IFCR[pos_u8], INTERRUPT_CLEARMASK, clearFlag_shiftBit_arr[clearPos_u8], INTERRUPT_CLEARMASK);
-
-	if (DMA1 == Stream_info_st.DMAx)
-	{
-		switch (Stream_info_st.stream)
-		{
-			case Stream_0:
-				NVIC_ISER_setVal(DMA1_Stream0);
-				break;
-
-			case Stream_1:
-				NVIC_ISER_setVal(DMA1_Stream1);
-				break;
-
-			case Stream_2:
-				NVIC_ISER_setVal(DMA1_Stream2);
-				break;
-
-			case Stream_3:
-				NVIC_ISER_setVal(DMA1_Stream3);
-				break;
-
-			case Stream_4:
-				NVIC_ISER_setVal(DMA1_Stream4);
-				break;
-
-			case Stream_5:
-				NVIC_ISER_setVal(DMA1_Stream5);
-				break;
-
-			case Stream_6:
-				NVIC_ISER_setVal(DMA1_Stream6);
-				break;
-
-			case Stream_7:
-				NVIC_ISER_setVal(DMA1_Stream7);
-				break;
-
-			default:
-				break;
-		}
-	}
-	else if (DMA2 == Stream_info_st.DMAx)
-	{
-		switch (Stream_info_st.stream)
-		{
-			case Stream_0:
-				NVIC_ISER_setVal(DMA2_Stream0);
-				break;
-			
-			case Stream_1:
-				NVIC_ISER_setVal(DMA2_Stream1);
-				break;
-			
-			case Stream_2:
-				NVIC_ISER_setVal(DMA2_Stream2);
-				break;
-			
-			case Stream_3:
-				NVIC_ISER_setVal(DMA2_Stream3);
-				break;
-			
-			case Stream_4:
-				NVIC_ISER_setVal(DMA2_Stream4);
-				break;
-			
-			case Stream_5:
-				NVIC_ISER_setVal(DMA2_Stream5);
-				break;
-			
-			case Stream_6:
-				NVIC_ISER_setVal(DMA2_Stream6);
-				break;
-			
-			case Stream_7:
-				NVIC_ISER_setVal(DMA2_Stream7);
-				break;
-			
-			default:
-				break;
-		}
-	}
+	// Enable interrupt line
+	NVIC_ISER_setVal(DMAx_Interrupt_line[Stream_info_st.DMAx][Stream_info_st.stream]);
 }

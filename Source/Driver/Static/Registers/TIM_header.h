@@ -24,6 +24,6 @@ typedef struct TIM_str
 	volatile uint32_t OR;
 } TIM_t;
 
-extern TIM_t *TIM_reg[14];
+extern TIM_t * const TIM_reg[14];
 
 #endif

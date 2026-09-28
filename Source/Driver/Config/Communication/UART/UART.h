@@ -27,6 +27,6 @@ extern volatile uint8_t isUpdated_UART[6];  //Need to be checked before reading 
 
 bool UART_init(UARTx_t UARTx, uint32_t baudrate);
 bool UART_transmit(UARTx_t UARTx, const uint8_t *buf, uint8_t data_length);
-void UART_Read(UARTx_t UARTx, uint8_t *buf, uint8_t data_length);
+bool UART_Read(UARTx_t UARTx, uint8_t *buf, uint8_t data_length);
 
 #endif

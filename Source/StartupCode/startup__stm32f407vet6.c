@@ -44,18 +44,18 @@ __attribute__((weak, alias("Default_Handler")))void TAMP_STAMP_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void RTC_WKUP_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void FLASH_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void RCC_Handler(void);
-__attribute__((weak, alias("Default_Handler")))void EXTI0_Handler(void);
+void EXTI0_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void EXTI1_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void EXTI2_Handler(void);
 void EXTI3_Handler(void);
 void EXTI4_Handler(void);
-__attribute__((weak, alias("Default_Handler")))void DMA1_Stream0_Handler(void);
-__attribute__((weak, alias("Default_Handler")))void DMA1_Stream1_Handler(void);
+void DMA1_Stream0_Handler(void);
+void DMA1_Stream1_Handler(void);
 void DMA1_Stream2_Handler(void);
 void DMA1_Stream3_Handler(void);
 void DMA1_Stream4_Handler(void);
 void DMA1_Stream5_Handler(void);
-__attribute__((weak, alias("Default_Handler")))void DMA1_Stream6_Handler(void);
+void DMA1_Stream6_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void ADC_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void CAN1_TX_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void CAN1_RX0_Handler(void);
@@ -78,7 +78,7 @@ __attribute__((weak, alias("Default_Handler")))void SPI2_Handler(void);
 void USART1_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void USART2_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void USART3_Handler(void);
-__attribute__((weak, alias("Default_Handler")))void EXTI15_10_Handler(void);
+void EXTI15_10_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void RTC_Alarm_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void OTG_FS_WKUP_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void TIM8_BRK_TIM12_Handler(void);
@@ -95,10 +95,10 @@ __attribute__((weak, alias("Default_Handler")))void UART5_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void TIM6_DAC_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void TIM7_Handler(void);
 void DMA2_Stream0_Handler(void);
-__attribute__((weak, alias("Default_Handler")))void DMA2_Stream1_Handler(void);
-__attribute__((weak, alias("Default_Handler")))void DMA2_Stream2_Handler(void);
+void DMA2_Stream1_Handler(void);
+void DMA2_Stream2_Handler(void);
 void DMA2_Stream3_Handler(void);
-__attribute__((weak, alias("Default_Handler")))void DMA2_Stream4_Handler(void);
+void DMA2_Stream4_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void ETH_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void ETH_WKUP_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void CAN2_TX_Handler(void);
@@ -107,7 +107,7 @@ __attribute__((weak, alias("Default_Handler")))void CAN2_RX1_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void CAN2_SCE_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void OTG_FS_Handler(void);
 void DMA2_Stream5_Handler(void);
-__attribute__((weak, alias("Default_Handler")))void DMA2_Stream6_Handler(void);
+void DMA2_Stream6_Handler(void);
 void DMA2_Stream7_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void USART6_Handler(void);
 __attribute__((weak, alias("Default_Handler")))void I2C3_EV_Handler(void);
@@ -251,6 +251,11 @@ void Reset_Handler(void)
     }
 }
 
+void EXTI0_Handler(void)
+{
+
+}
+
 void EXTI3_Handler(void)
 {
 	if (READ_REG(EXTI_reg->PR, 1UL, 3U))
@@ -269,46 +274,50 @@ void EXTI4_Handler(void)
 	}
 }
 
+void EXTI15_10_Handler(void)
+{
+    if (INITTED == UART_init_state[USART1])
+    {
+        //Disable EXTI
+        CLEAR_BIT(EXTI_reg->IMR, 10U);
+        SET_BIT(EXTI_reg->PR, 10U);
+
+        UART_state_rx[USART1] = UART_STATE_BUSY;
+    }
+}
+
 void USART1_Handler(void)
 {
-    // Check if the RXNE (Receive Not Empty) flag is set in the Status Register
-	if (READ_REG(USART_reg[USART1]->SR, 1UL, 5U))
-	{
-        UART_state_rx[USART1] = UART_STATE_BUSY;
-	}
-
     // Check IDLE flag
-    if (READ_REG(USART_reg[USART1]->SR, 1UL, 4U))
+    if (READ_REG(USART_reg[USART1]->SR, 1UL, 4U) && (UART_STATE_BUSY == UART_state_rx[USART1]))
     {
-        // Clear error flags
-        UART_state_rx[USART1] = UART_STATE_BUSY;
-        uint32_t temp = USART_reg[USART1]->SR;
-        temp = USART_reg[USART1]->DR;
+        UART_recv_buf[USART1].isEmpty = false;
+        UART_recv_buf[USART1].rear = (uint8_t)(sizeof(UART_recv_buf[USART1].buf) - DMA_reg[DMA2]->S[5].NDTR - 1);
 
-        if (UART_recv_buf[USART1].isFull)
+        if (true == UART_recv_buf[USART1].isFull)
         {
-            UART_recv_buf[USART1].overrun = true;
-            UART_recv_buf[USART1].isFull = false;
+            UART_recv_buf[USART1].front = (UART_recv_buf[USART1].rear + 1) % sizeof(UART_recv_buf[USART1].buf);
         }
 
-        if ((uint8_t)(ARR_SIZE - 1) == UART_recv_buf[USART1].rear)
+        if (
+            (UART_recv_buf[USART1].front <= ((UART_recv_buf[USART1].rear + 1) % sizeof(UART_recv_buf[USART1].buf)))
+            && (false == UART_recv_buf[USART1].isEmpty)
+            && (UART_recv_buf[USART1].overrun)
+        )
         {
             UART_recv_buf[USART1].isFull = true;
-            UART_recv_buf[USART1].overrun = false;
         }
 
-        UART_recv_buf[USART1].isEmpty = false;
-        UART_recv_buf[USART1].rear = (uint8_t)(ARR_SIZE - DMA_reg[DMA2]->S[5].NDTR);
         isUpdated_UART[USART1] = true;
 
-        if (NOT_INITTED == UART_init_state[USART1])
-        {
-            // Disable Receiver
-	        CLEAR_BIT(USART_reg[USART1]->CR1, 2U);
-        }
-
-        UART_state_rx[USART1] = UART_STATE_READY;
+        // Clear IDLE flag
+        uint32_t temp = USART_reg[USART1]->SR;
+        temp = USART_reg[USART1]->DR;
         (void)temp;
+        
+        //Enable EXTI
+        SET_BIT(EXTI_reg->IMR, 10U);
+        UART_state_rx[USART1] = UART_STATE_READY;
     }
 
     // Check Overrun error, Noise ,Framing error and Parity error
@@ -457,72 +466,12 @@ void I2C1_ER_Handler(void)
     }
 }
 
-void DMA1_Stream2_Handler(void)
+void DMA1_Stream0_Handler(void)
 {
-    if (READ_REG(DMA_reg[DMA1]->ISR[0], 1UL, 21U))
+    if (READ_REG(DMA_reg[DMA1]->ISR[0], 1UL, (interruptFlag_0or4 + TCIFx)))
     {
-        SET_BIT(DMA_reg[DMA1]->IFCR[0], 21U);
-
-        if (I2C_STATE_BUSY == I2C_state_rx[I2C3])
-        {
-            // Set Buffer interrupt enable
-            SET_BIT(I2C_reg[I2C3]->CR2, 10U);
-            // DMA requests disable
-            CLEAR_BIT(I2C_reg[I2C3]->CR2, 11U);
-        }
-    }
-
-    if (READ_REG(DMA_reg[DMA1]->ISR[0], 1UL, 18U))
-    {
-        SET_BIT(DMA_reg[DMA1]->IFCR[0], 18U);
-    }
-}
-
-void DMA1_Stream3_Handler(void)
-{
-    if (READ_REG(DMA_reg[DMA1]->ISR[0], 1UL, 27U))
-    {
-        SET_BIT(DMA_reg[DMA1]->IFCR[0], 27U);
-
-        if (I2C_STATE_BUSY == I2C_state_rx[I2C2])
-        {
-            // Set Buffer interrupt enable
-            SET_BIT(I2C_reg[I2C2]->CR2, 10U);
-            // DMA requests disable
-            CLEAR_BIT(I2C_reg[I2C2]->CR2, 11U);
-        }
-    }
-
-    if (READ_REG(DMA_reg[DMA1]->ISR[0], 1UL, 24U))
-    {
-        SET_BIT(DMA_reg[DMA1]->IFCR[0], 24U);
-    }
-}
-
-void DMA1_Stream4_Handler(void)
-{
-    if (READ_REG(DMA_reg[DMA1]->ISR[1], 1UL, 5U))
-    {
-        SET_BIT(DMA_reg[DMA1]->IFCR[1], 5U);
-
-        if (I2C_STATE_BUSY == I2C_state_tx[I2C3])
-        {
-            // DMA requests disable
-            CLEAR_BIT(I2C_reg[I2C3]->CR2, 11U);
-        }
-    }
-
-    if (READ_REG(DMA_reg[DMA1]->ISR[1], 1UL, 2U))
-    {
-        SET_BIT(DMA_reg[DMA1]->IFCR[1], 2U);
-    }
-}
-
-void DMA1_Stream5_Handler(void)
-{
-    if (READ_REG(DMA_reg[DMA1]->ISR[1], 1UL, 11U))
-    {
-        SET_BIT(DMA_reg[DMA1]->IFCR[1], 11U);
+        // Clear TCIFx
+        SET_BIT(DMA_reg[DMA1]->IFCR[0], (interruptFlag_0or4 + TCIFx));
 
         if (I2C_STATE_BUSY == I2C_state_rx[I2C1])
         {
@@ -533,17 +482,181 @@ void DMA1_Stream5_Handler(void)
         }
     }
 
-    if (READ_REG(DMA_reg[DMA1]->ISR[1], 1UL, 8U))
+    if (READ_REG(DMA_reg[DMA1]->ISR[0], 1UL, (interruptFlag_0or4 + DMEIFx)))
     {
-        SET_BIT(DMA_reg[DMA1]->IFCR[1], 8U);
+        SET_BIT(DMA_reg[DMA1]->IFCR[0], (interruptFlag_0or4 + DMEIFx));
+    }
+
+    if (READ_REG(DMA_reg[DMA1]->ISR[0], 1UL, (interruptFlag_0or4 + TEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA1]->IFCR[0], (interruptFlag_0or4 + TEIFx));
+    }
+}
+
+void DMA1_Stream1_Handler(void)
+{
+    if (READ_REG(DMA_reg[DMA1]->ISR[0], 1UL, (interruptFlag_1or5 + TCIFx)))
+    {
+        // Clear TCIFx
+        SET_BIT(DMA_reg[DMA1]->IFCR[0], (interruptFlag_1or5 + TCIFx));
+    }
+
+    if (READ_REG(DMA_reg[DMA1]->ISR[0], 1UL, (interruptFlag_1or5 + DMEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA1]->IFCR[0], (interruptFlag_1or5 + DMEIFx));
+    }
+
+    if (READ_REG(DMA_reg[DMA1]->ISR[0], 1UL, (interruptFlag_1or5 + TEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA1]->IFCR[0], (interruptFlag_1or5 + TEIFx));
+    }
+}
+
+void DMA1_Stream2_Handler(void)
+{
+    if (READ_REG(DMA_reg[DMA1]->ISR[0], 1UL, (interruptFlag_2or6 + TCIFx)))
+    {
+        // Clear TCIFx
+        SET_BIT(DMA_reg[DMA1]->IFCR[0], (interruptFlag_2or6 + TCIFx));
+
+        if (I2C_STATE_BUSY == I2C_state_rx[I2C2])
+        {
+            // Set Buffer interrupt enable
+            SET_BIT(I2C_reg[I2C2]->CR2, 10U);
+            // DMA requests disable
+            CLEAR_BIT(I2C_reg[I2C2]->CR2, 11U);
+        }
+
+        if (I2C_STATE_BUSY == I2C_state_rx[I2C3])
+        {
+            // Set Buffer interrupt enable
+            SET_BIT(I2C_reg[I2C3]->CR2, 10U);
+            // DMA requests disable
+            CLEAR_BIT(I2C_reg[I2C3]->CR2, 11U);
+        }
+    }
+
+    if (READ_REG(DMA_reg[DMA1]->ISR[0], 1UL, (interruptFlag_2or6 + DMEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA1]->IFCR[0], (interruptFlag_2or6 + DMEIFx));
+    }
+
+    if (READ_REG(DMA_reg[DMA1]->ISR[0], 1UL, (interruptFlag_2or6 + TEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA1]->IFCR[0], (interruptFlag_2or6 + TEIFx));
+    }
+}
+
+void DMA1_Stream3_Handler(void)
+{
+    if (READ_REG(DMA_reg[DMA1]->ISR[0], 1UL, (interruptFlag_3or7 + TCIFx)))
+    {
+        // Clear TCIFx
+        SET_BIT(DMA_reg[DMA1]->IFCR[0], (interruptFlag_3or7 + TCIFx));
+
+        if (I2C_STATE_BUSY == I2C_state_rx[I2C2])
+        {
+            // Set Buffer interrupt enable
+            SET_BIT(I2C_reg[I2C2]->CR2, 10U);
+            // DMA requests disable
+            CLEAR_BIT(I2C_reg[I2C2]->CR2, 11U);
+        }
+    }
+
+    if (READ_REG(DMA_reg[DMA1]->ISR[0], 1UL, (interruptFlag_3or7 + DMEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA1]->IFCR[0], (interruptFlag_3or7 + DMEIFx));
+    }
+
+    if (READ_REG(DMA_reg[DMA1]->ISR[0], 1UL, (interruptFlag_3or7 + TEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA1]->IFCR[0], (interruptFlag_3or7 + TEIFx));
+    }
+}
+
+void DMA1_Stream4_Handler(void)
+{
+    if (READ_REG(DMA_reg[DMA1]->ISR[1], 1UL, (interruptFlag_0or4 + TCIFx)))
+    {
+        // Clear TCIFx
+        SET_BIT(DMA_reg[DMA1]->IFCR[1], (interruptFlag_0or4 + TCIFx));
+
+        if (I2C_STATE_BUSY == I2C_state_tx[I2C3])
+        {
+            // DMA requests disable
+            CLEAR_BIT(I2C_reg[I2C3]->CR2, 11U);
+        }
+    }
+
+    if (READ_REG(DMA_reg[DMA1]->ISR[1], 1UL, (interruptFlag_0or4 + DMEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA1]->IFCR[1], (interruptFlag_0or4 + DMEIFx));
+    }
+
+    if (READ_REG(DMA_reg[DMA1]->ISR[1], 1UL, (interruptFlag_0or4 + TEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA1]->IFCR[1], (interruptFlag_0or4 + TEIFx));
+    }
+}
+
+void DMA1_Stream5_Handler(void)
+{
+    if (READ_REG(DMA_reg[DMA1]->ISR[1], 1UL, (interruptFlag_1or5 + TCIFx)))
+    {
+        // Clear TCIFx
+        SET_BIT(DMA_reg[DMA1]->IFCR[1], (interruptFlag_1or5 + TCIFx));
+
+        if (I2C_STATE_BUSY == I2C_state_rx[I2C1])
+        {
+            // Set Buffer interrupt enable
+            SET_BIT(I2C_reg[I2C1]->CR2, 10U);
+            // DMA requests disable
+            CLEAR_BIT(I2C_reg[I2C1]->CR2, 11U);
+        }
+    }
+
+    if (READ_REG(DMA_reg[DMA1]->ISR[1], 1UL, (interruptFlag_1or5 + DMEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA1]->IFCR[1], (interruptFlag_1or5 + DMEIFx));
+    }
+
+    if (READ_REG(DMA_reg[DMA1]->ISR[1], 1UL, (interruptFlag_1or5 + TEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA1]->IFCR[1], (interruptFlag_1or5 + TEIFx));
+    }
+}
+
+void DMA1_Stream6_Handler(void)
+{
+    if (READ_REG(DMA_reg[DMA1]->ISR[1], 1UL, (interruptFlag_2or6 + TCIFx)))
+    {
+        // Clear TCIFx
+        SET_BIT(DMA_reg[DMA1]->IFCR[1], (interruptFlag_2or6 + TCIFx));
+
+        if (I2C_STATE_BUSY == I2C_state_tx[I2C1])
+        {
+            // DMA requests disable
+            CLEAR_BIT(I2C_reg[I2C1]->CR2, 11U);
+        }
+    }
+
+    if (READ_REG(DMA_reg[DMA1]->ISR[1], 1UL, (interruptFlag_2or6 + DMEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA1]->IFCR[1], (interruptFlag_2or6 + DMEIFx));
+    }
+
+    if (READ_REG(DMA_reg[DMA1]->ISR[1], 1UL, (interruptFlag_2or6 + TEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA1]->IFCR[1], (interruptFlag_2or6 + TEIFx));
     }
 }
 
 void DMA1_Stream7_Handler(void)
 {
-    if (READ_REG(DMA_reg[DMA1]->ISR[1], 1UL, 27U))
+    if (READ_REG(DMA_reg[DMA1]->ISR[1], 1UL, (interruptFlag_3or7 + TCIFx)))
     {
-        SET_BIT(DMA_reg[DMA1]->IFCR[1], 27U);
+        // Clear TCIFx
+        SET_BIT(DMA_reg[DMA1]->IFCR[1], (interruptFlag_3or7 + TCIFx));
 
         if (I2C_STATE_BUSY == I2C_state_tx[I2C1])
         {
@@ -558,62 +671,183 @@ void DMA1_Stream7_Handler(void)
         }
     }
 
-    if (READ_REG(DMA_reg[DMA1]->ISR[1], 1UL, 24U))
+    if (READ_REG(DMA_reg[DMA1]->ISR[1], 1UL, (interruptFlag_3or7 + DMEIFx)))
     {
-        SET_BIT(DMA_reg[DMA1]->IFCR[1], 24U);
+        SET_BIT(DMA_reg[DMA1]->IFCR[1], (interruptFlag_3or7 + DMEIFx));
+    }
+
+    if (READ_REG(DMA_reg[DMA1]->ISR[1], 1UL, (interruptFlag_3or7 + TEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA1]->IFCR[1], (interruptFlag_3or7 + TEIFx));
     }
 }
 
 void DMA2_Stream0_Handler(void)
 {
-    if (READ_REG(DMA_reg[DMA2]->ISR[0], 1UL, 5U))
+    if (READ_REG(DMA_reg[DMA2]->ISR[0], 1UL, (interruptFlag_0or4 + TCIFx)))
     {
-        SET_BIT(DMA_reg[DMA2]->IFCR[0], 5U);
+        // Clear TCIFx
+        SET_BIT(DMA_reg[DMA2]->IFCR[0], (interruptFlag_0or4 + TCIFx));
     }
 
-    if (READ_REG(DMA_reg[DMA2]->ISR[0], 1UL, 2U))
+    if (READ_REG(DMA_reg[DMA2]->ISR[0], 1UL, (interruptFlag_0or4 + DMEIFx)))
     {
-        SET_BIT(DMA_reg[DMA2]->IFCR[0], 2U);
+        SET_BIT(DMA_reg[DMA2]->IFCR[0], (interruptFlag_0or4 + DMEIFx));
+    }
+
+    if (READ_REG(DMA_reg[DMA2]->ISR[0], 1UL, (interruptFlag_0or4 + TEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA2]->IFCR[0], (interruptFlag_0or4 + TEIFx));
+    }
+}
+
+void DMA2_Stream1_Handler(void)
+{
+    if (READ_REG(DMA_reg[DMA2]->ISR[0], 1UL, (interruptFlag_1or5 + TCIFx)))
+    {
+        // Clear TCIFx
+        SET_BIT(DMA_reg[DMA2]->IFCR[0], (interruptFlag_1or5 + TCIFx));
+    }
+
+    if (READ_REG(DMA_reg[DMA2]->ISR[0], 1UL, (interruptFlag_1or5 + DMEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA2]->IFCR[0], (interruptFlag_1or5 + DMEIFx));
+    }
+
+    if (READ_REG(DMA_reg[DMA2]->ISR[0], 1UL, (interruptFlag_1or5 + TEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA2]->IFCR[0], (interruptFlag_1or5 + TEIFx));
+    }
+}
+
+void DMA2_Stream2_Handler(void)
+{
+    if (READ_REG(DMA_reg[DMA2]->ISR[0], 1UL, (interruptFlag_2or6 + TCIFx)))
+    {
+        if (INITTED == UART_init_state[USART1])
+        {
+            if (false == UART_recv_buf[USART1].overrun)
+            {
+                UART_recv_buf[USART1].overrun = true;
+            }
+        }
+
+        // Clear TCIFx
+        SET_BIT(DMA_reg[DMA2]->IFCR[0], (interruptFlag_2or6 + TCIFx));
+    }
+
+    if (READ_REG(DMA_reg[DMA2]->ISR[0], 1UL, (interruptFlag_2or6 + DMEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA2]->IFCR[0], (interruptFlag_2or6 + DMEIFx));
+    }
+
+    if (READ_REG(DMA_reg[DMA2]->ISR[0], 1UL, (interruptFlag_2or6 + TEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA2]->IFCR[0], (interruptFlag_2or6 + TEIFx));
     }
 }
 
 void DMA2_Stream3_Handler(void)
 {
-    if (READ_REG(DMA_reg[DMA2]->ISR[0], 1UL, 27U))
+    if (READ_REG(DMA_reg[DMA2]->ISR[0], 1UL, (interruptFlag_3or7 + TCIFx)))
     {
-        SET_BIT(DMA_reg[DMA2]->IFCR[0], 27U);
+        // Clear TCIFx
+        SET_BIT(DMA_reg[DMA2]->IFCR[0], (interruptFlag_3or7 + TCIFx));
     }
 
-    if (READ_REG(DMA_reg[DMA2]->ISR[0], 1UL, 24U))
+    if (READ_REG(DMA_reg[DMA2]->ISR[0], 1UL, (interruptFlag_3or7 + DMEIFx)))
     {
-        SET_BIT(DMA_reg[DMA2]->IFCR[0], 24U);
+        SET_BIT(DMA_reg[DMA2]->IFCR[0], (interruptFlag_3or7 + DMEIFx));
+    }
+
+    if (READ_REG(DMA_reg[DMA2]->ISR[0], 1UL, (interruptFlag_3or7 + TEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA2]->IFCR[0], (interruptFlag_3or7 + TEIFx));
+    }
+}
+
+void DMA2_Stream4_Handler(void)
+{
+    if (READ_REG(DMA_reg[DMA2]->ISR[1], 1UL, (interruptFlag_0or4 + TCIFx)))
+    {
+        // Clear TCIFx
+        SET_BIT(DMA_reg[DMA2]->IFCR[1], (interruptFlag_0or4 + TCIFx));
+    }
+
+    if (READ_REG(DMA_reg[DMA2]->ISR[1], 1UL, (interruptFlag_0or4 + DMEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA2]->IFCR[1], (interruptFlag_0or4 + DMEIFx));
+    }
+
+    if (READ_REG(DMA_reg[DMA2]->ISR[1], 1UL, (interruptFlag_0or4 + TEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA2]->IFCR[1], (interruptFlag_0or4 + TEIFx));
     }
 }
 
 void DMA2_Stream5_Handler(void)
 {
-    if (READ_REG(DMA_reg[DMA2]->ISR[1], 1UL, 11U))
+    if (READ_REG(DMA_reg[DMA2]->ISR[1], 1UL, (interruptFlag_1or5 + TCIFx)))
     {
-        SET_BIT(DMA_reg[DMA2]->IFCR[1], 11U);
+        // Clear TCIFx
+        SET_BIT(DMA_reg[DMA2]->IFCR[1], (interruptFlag_1or5 + TCIFx));
     }
 
-    if (READ_REG(DMA_reg[DMA2]->ISR[1], 1UL, 8U))
+    if (READ_REG(DMA_reg[DMA2]->ISR[1], 1UL, (interruptFlag_1or5 + DMEIFx)))
     {
-        SET_BIT(DMA_reg[DMA2]->IFCR[1], 8U);
+        SET_BIT(DMA_reg[DMA2]->IFCR[1], (interruptFlag_1or5 + DMEIFx));
+    }
+
+    if (READ_REG(DMA_reg[DMA2]->ISR[1], 1UL, (interruptFlag_1or5 + TEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA2]->IFCR[1], (interruptFlag_1or5 + TEIFx));
+    }
+}
+
+void DMA2_Stream6_Handler(void)
+{
+    if (READ_REG(DMA_reg[DMA2]->ISR[1], 1UL, (interruptFlag_2or6 + TCIFx)))
+    {
+        // Clear TCIFx
+        SET_BIT(DMA_reg[DMA2]->IFCR[1], (interruptFlag_2or6 + TCIFx));
+    }
+
+    if (READ_REG(DMA_reg[DMA2]->ISR[1], 1UL, (interruptFlag_2or6 + DMEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA2]->IFCR[1], (interruptFlag_2or6 + DMEIFx));
+    }
+
+    if (READ_REG(DMA_reg[DMA2]->ISR[1], 1UL, (interruptFlag_2or6 + TEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA2]->IFCR[1], (interruptFlag_2or6 + TEIFx));
     }
 }
 
 void DMA2_Stream7_Handler(void)
 {
-    if (READ_REG(DMA_reg[DMA2]->ISR[1], 1UL, 27U))
+    if (READ_REG(DMA_reg[DMA2]->ISR[1], 1UL, (interruptFlag_3or7 + TCIFx)))
     {
-        SET_BIT(DMA_reg[DMA2]->IFCR[1], 27U);
-        UART_state_tx[USART1] = UART_STATE_READY;
+        // Clear TCIFx
+        SET_BIT(DMA_reg[DMA2]->IFCR[1], (interruptFlag_3or7 + TCIFx));
+
+        if (UART_STATE_BUSY == UART_state_tx[USART1])
+        {
+            UART_state_tx[USART1] = UART_STATE_READY;
+            // Disable DMA transmitter
+		    CLEAR_BIT(USART_reg[USART1]->CR3, 7U);
+		    // Disable Transmitter
+		    CLEAR_BIT(USART_reg[USART1]->CR1, 3U);
+        }
     }
 
-    if (READ_REG(DMA_reg[DMA2]->ISR[1], 1UL, 24U))
+    if (READ_REG(DMA_reg[DMA2]->ISR[1], 1UL, (interruptFlag_3or7 + DMEIFx)))
     {
-        SET_BIT(DMA_reg[DMA2]->IFCR[1], 24U);
+        SET_BIT(DMA_reg[DMA2]->IFCR[1], (interruptFlag_3or7 + DMEIFx));
+    }
+
+    if (READ_REG(DMA_reg[DMA2]->ISR[1], 1UL, (interruptFlag_3or7 + TEIFx)))
+    {
+        SET_BIT(DMA_reg[DMA2]->IFCR[1], (interruptFlag_3or7 + TEIFx));
     }
 }
 

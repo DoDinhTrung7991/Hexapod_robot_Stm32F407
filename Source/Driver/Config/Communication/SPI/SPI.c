@@ -2,46 +2,46 @@
 
 typedef struct
 {
-	volatile uint32_t *reg_u32_ptr;
-	unsigned int pos;
-} RCC_APBxENR_SPI_t;
+    GPIO_ENABLE_t GPIOx_en;
+    uint8_t pos_u8;
+} GPIO_SPI_t;
 
-SPI_t *SPI[3] = 
+SPI_t * const SPI[3] = 
 {
     (SPI_t *)0x40005400,
     (SPI_t *)0x40005800,
     (SPI_t *)0x40005C00
 };
 
-static GPIO_SPI_t GPIO_SPI_MISO_st[3] =
+static const GPIO_SPI_t GPIO_SPI_MISO_st[3] =
 {
     {GPIOAEN, 6U}, // {GPIOBEN, 4U}
     {GPIOCEN, 2U}, // {GPIOBEN, 14U}
     {GPIOCEN, 11U} // {GPIOBEN, 4U}
 };
 
-static GPIO_SPI_t GPIO_SPI_MOSI_st[3] =
+static const GPIO_SPI_t GPIO_SPI_MOSI_st[3] =
 {
     {GPIOAEN, 7U}, // {GPIOBEN, 5U}
     {GPIOCEN, 3U}, // {GPIOBEN, 15U}
     {GPIOCEN, 12U} // {GPIOBEN, 5U}
 };
 
-static GPIO_SPI_t GPIO_SPI_NSS_st[3] =
+static const GPIO_SPI_t GPIO_SPI_NSS_st[3] =
 {
     {GPIOAEN, 4U}, // {GPIOAEN, 15U}
     {GPIOBEN, 12U}, // {GPIOBEN, 9U}
-    {GPIOAEN, 4U} // {GPIOAEN, 15U}
+    {GPIOAEN, 15U} // {GPIOAEN, 4U}
 };
 
-static GPIO_SPI_t GPIO_SPI_SCK_st[3] =
+static const GPIO_SPI_t GPIO_SPI_SCK_st[3] =
 {
     {GPIOAEN, 5U}, // {GPIOBEN, 3U}
     {GPIOBEN, 10U}, // {GPIOBEN, 13U}
     {GPIOCEN, 10U} // {GPIOBEN, 3U}
 };
 
-static AFRx_t SPI_GPIO_AFx[3] =
+static const AFRx_t SPI_GPIO_AFx[3] =
 {
     AF5,
     AF5,
@@ -99,7 +99,7 @@ static const stream_channel_t SPI_Stream_info_rx_st[3] =
 	}
 };
 
-static const unsigned int SPIx_Interrupt_line[3] =
+static const peripheral_Selection_t SPIx_Interrupt_line[3] =
 {
 	SPI1_Interrupt,
 	SPI2_Interrupt,
@@ -108,7 +108,7 @@ static const unsigned int SPIx_Interrupt_line[3] =
 
 static uint8_t SPI_recv_buf[3][ARR_SIZE];
 
-static RCC_APBxENR_SPI_t RCC_APBxENR_SPI_arr[3] =
+static RCC_APBxENR_enable_t RCC_APBxENR_SPI_arr[3] =
 {
 	{&RCC_reg->APB2ENR, 12U},
 	{&RCC_reg->APB1ENR, 14U},
@@ -281,13 +281,13 @@ bool SPI_send_receive(SPIx_t SPIx_en, const uint8_t *str, uint32_t length_u32)
 			.channel = SPI_Stream_info_rx_st[SPIx_en].channel
 		};
 
+		// Enable DMA
+		SET_BIT(SPI[SPIx_en]->CR2, 0U); // RXDMAEN bit
+		SET_BIT(SPI[SPIx_en]->CR2, 1U); // TXDMAEN bit
 		// Setup DMA tx
 		DMA_transfer(Stream_info_tx_st, buffer_info_tx_st);
 		// Setup DMA rx
 		DMA_transfer(Stream_info_rx_st, buffer_info_rx_st);
-		// Enable DMA
-		SET_BIT(SPI[SPIx_en]->CR2, 0U); // RXDMAEN bit
-		SET_BIT(SPI[SPIx_en]->CR2, 1U); // TXDMAEN bit
 		// Enable SPI
         SET_BIT(SPI[SPIx_en]->CR1, 6U); // SPE bit
 	}

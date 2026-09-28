@@ -24,7 +24,7 @@ typedef struct GPIOx_str
 	volatile uint32_t AFRH;
 } GPIOx_t;
 
-extern GPIOx_t *GPIO_reg[9];
+extern GPIOx_t * const GPIO_reg[9];
 
 #endif /* INC_GPIO_HEADER_H_ */
 

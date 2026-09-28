@@ -3,7 +3,6 @@
 #include "UART.h"
 #include "GPIO.h"
 #include "Interrupt.h"
-#include <string.h>
 
 typedef struct
 {
@@ -12,13 +11,7 @@ typedef struct
 	AFRx_t AFx_en;
 } GPIO_UART_t;
 
-typedef struct
-{
-	volatile uint32_t *reg_u32_ptr;
-	unsigned int pos;
-} RCC_APBxENR_UART_t;
-
-USART_t *USART_reg[6] = {
+USART_t * const USART_reg[6] = {
 	(USART_t*)0x40011000,
 	(USART_t*)0x40004400,
 	(USART_t*)0x40004800,
@@ -165,7 +158,7 @@ static const GPIO_UART_t GPIO_UART_rx_st[6] =
     {GPIOCEN, 7U, AF8}
 };
 
-static RCC_APBxENR_UART_t RCC_APBxENR_UART_arr[6] =
+static RCC_APBxENR_enable_t RCC_APBxENR_UART_arr[6] =
 {
 	{&RCC_reg->APB2ENR, 4U},
 	{&RCC_reg->APB1ENR, 17U},
@@ -175,7 +168,7 @@ static RCC_APBxENR_UART_t RCC_APBxENR_UART_arr[6] =
 	{&RCC_reg->APB2ENR, 5U}
 };
 
-static const unsigned int UARTx_Interrupt_line[6] =
+static const peripheral_Selection_t UARTx_Interrupt_line[6] =
 {
 	USART1_Interrupt,
 	USART2_Interrupt,
@@ -190,8 +183,14 @@ bool UART_init(UARTx_t UARTx, uint32_t baudrate)
 	UART_init_state[UARTx] = NOT_INITTED;
 	static bool is_Init_done_once[6] = {false, false, false, false, false, false};
 
-	if ((UART_STATE_READY == UART_state_tx[UARTx]) || (UART_STATE_READY == UART_state_rx[UARTx]))
+	if ((UART_STATE_READY == UART_state_tx[UARTx]) && (UART_STATE_READY == UART_state_rx[UARTx]))
 	{
+		uint32_t over8_u32;
+		uint32_t brr_val_u32 = 0;
+		uint32_t DIV_Mantissa_u32;
+		uint32_t DIV_Fraction_u32;
+		uint32_t fck_u32 = 0;
+
 		if (false == is_Init_done_once[UARTx])
 		{
 			DMA_direct_param_t DMA_direct_param_tx_st = (DMA_direct_param_t)
@@ -244,7 +243,7 @@ bool UART_init(UARTx_t UARTx, uint32_t baudrate)
 		
 			buffer_t buffer_info_rx_st = (buffer_t)
 			{
-				.data_length = ARR_SIZE,
+				.data_length = sizeof(UART_recv_buf[UARTx].buf),
 				.peri_addr = &USART_reg[UARTx]->DR,
 				.mem_addr = UART_recv_buf[UARTx].buf
 			};
@@ -260,6 +259,15 @@ bool UART_init(UARTx_t UARTx, uint32_t baudrate)
 			// Setup GPIO for USART ports
 			GPIO_setup(GPIO_UART_tx_st[UARTx].GPIOx_en, GPIO_UART_tx_st[UARTx].pos_u8, AF, GPIO_UART_tx_st[UARTx].AFx_en, PP, NoP);	// TX
 			GPIO_setup(GPIO_UART_rx_st[UARTx].GPIOx_en, GPIO_UART_rx_st[UARTx].pos_u8, AF, GPIO_UART_rx_st[UARTx].AFx_en, PP, NoP);	// RX
+
+			// Setup EXTI to detect Start bit of UART Rx
+			Ex_Interrupt(
+				GPIO_UART_rx_st[UARTx].GPIOx_en,
+				GPIO_UART_rx_st[UARTx].pos_u8,
+				NoP,
+				Rising_Edge
+			);
+
 			// Enable clock for USART peripheral
 			SET_BIT(*RCC_APBxENR_UART_arr[UARTx].reg_u32_ptr, RCC_APBxENR_UART_arr[UARTx].pos);
 			// Enable Interrupt line
@@ -268,42 +276,63 @@ bool UART_init(UARTx_t UARTx, uint32_t baudrate)
 			is_Init_done_once[UARTx] = true;
 		}
 		
-		// init queue
-		queue_init((queue_t*)&UART_recv_buf[UARTx]);
 		// Disable USART
 		CLEAR_BIT(USART_reg[UARTx]->CR1, 13U);
 		// Setting Data layout
 		CLEAR_BIT(USART_reg[UARTx]->CR1, 12U);
 		// Setting Stop bits
 		WRITE_REG(USART_reg[UARTx]->CR2, 3UL, 12U, 0UL);
-		// Setting DMA transmitter
-		SET_BIT(USART_reg[UARTx]->CR3, 7U);
-		// Setting DMA receiver
-		SET_BIT(USART_reg[UARTx]->CR3, 6U);
 		// Choose oversampling
 		CLEAR_BIT(USART_reg[UARTx]->CR1, 15U);
+		
 		// Calculate Baudrate
-		uint32_t fck = 0;
-
+		over8_u32 = READ_REG(USART_reg[UARTx]->CR1, 1UL, 15U);
+		
 		if ((USART1 == UARTx) || (USART6 == UARTx))
 		{
-			fck = APB2_freq;
+			fck_u32 = APB2_freq;
 		}
 		else if ((USART2 == UARTx) || (USART3 == UARTx) || (UART4 == UARTx) || (UART5 == UARTx))
 		{
-			fck = APB1_freq;
+			fck_u32 = APB1_freq;
 		}
 		else
 		{
 			return NOT_OK;
 		}
 
-		uint32_t div_mantissa = fck / (8 * (2 - READ_REG(USART_reg[UARTx]->CR1, 1UL, 15U)) * baudrate);
-		uint32_t div_fraction_times_100 = ((fck * 100) / (8 * (2 - READ_REG(USART_reg[UARTx]->CR1, 1UL, 15U)) * baudrate)) % 100;
-		uint32_t div_fraction = (div_fraction_times_100 * (8 * (2 - READ_REG(USART_reg[UARTx]->CR1, 1UL, 15U))) + 50) / 100;
-		uint32_t brr_val = (div_mantissa << 4) | (div_fraction & 0xFU);
+		DIV_Mantissa_u32 = fck_u32 / (8 * (2 - over8_u32) * baudrate);
+											//DIV_Fraction_u32 times 100
+		DIV_Fraction_u32 = ((((fck_u32 * 100) / (8 * (2 - over8_u32) * baudrate)) % 100) * (2 - over8_u32) + 50) / 100;
+
+		if (over8_u32)
+		{
+			if (8 <= DIV_Fraction_u32)
+			{
+				DIV_Fraction_u32 = 0;
+				DIV_Mantissa_u32 ++;
+			}
+			else
+			{
+				// do nothing
+			}
+		}
+		else
+		{
+			if (16 <= DIV_Fraction_u32)
+			{
+				DIV_Fraction_u32 = 0;
+				DIV_Mantissa_u32 ++;
+			}
+			else
+			{
+				// do nothing
+			}
+		}
+
+		brr_val_u32 = (DIV_Mantissa_u32 << 4U) | (DIV_Fraction_u32 & 0xFUL);
 		// Setting Baudrate
-		WRITE_REG(USART_reg[UARTx]->BRR, 0xFFFFUL, 0U, brr_val);
+		WRITE_REG(USART_reg[UARTx]->BRR, 0xFFFFUL, 0U, brr_val_u32);
 		// Enable/Disable Parity control
 		CLEAR_BIT(USART_reg[UARTx]->CR1, 10U);
 		// CTS enable
@@ -314,15 +343,17 @@ bool UART_init(UARTx_t UARTx, uint32_t baudrate)
 		CLEAR_BIT(USART_reg[UARTx]->CR2, 11U);
 		// Half-duplex selection
 		CLEAR_BIT(USART_reg[UARTx]->CR3, 3U);
-		// LIN mode enable
+		// LIN mode disable
 		CLEAR_BIT(USART_reg[UARTx]->CR2, 14U);
-		// Smartcard mode enable
+		// Smartcard mode disable
 		CLEAR_BIT(USART_reg[UARTx]->CR3, 5U);
-		// IrDA mode enable
+		// IrDA mode disable
 		CLEAR_BIT(USART_reg[UARTx]->CR3, 1U);
-		// Enable/Disable Error interrupt
+
+		// Enable/Disable interrupt
+		// Enable Error interrupt
 		SET_BIT(USART_reg[UARTx]->CR3, 0U);
-		// Parity error interrupt enable
+		// Parity error interrupt disable
 		CLEAR_BIT(USART_reg[UARTx]->CR1, 8U);
 		// IDLE interrupt enable
 		SET_BIT(USART_reg[UARTx]->CR1, 4U);
@@ -332,12 +363,15 @@ bool UART_init(UARTx_t UARTx, uint32_t baudrate)
 		CLEAR_BIT(USART_reg[UARTx]->CR1, 6U);
 		// RXNE interrupt disable
 		CLEAR_BIT(USART_reg[UARTx]->CR1, 5U);
-		// Enable USART
-		SET_BIT(USART_reg[UARTx]->CR1, 13U);
-		// Enable Transmitter
-		SET_BIT(USART_reg[UARTx]->CR1, 3U);
+
+		// init queue
+		queue_init((queue_t*)&UART_recv_buf[UARTx]);
+		// Enable DMA receiver
+		SET_BIT(USART_reg[UARTx]->CR3, 6U);
 		// Enable Receiver
 		SET_BIT(USART_reg[UARTx]->CR1, 2U);
+		// Enable USART
+		SET_BIT(USART_reg[UARTx]->CR1, 13U);
 		UART_init_state[UARTx] = INITTED;
 	}
 	else
@@ -350,7 +384,13 @@ bool UART_init(UARTx_t UARTx, uint32_t baudrate)
 
 bool UART_transmit(UARTx_t UARTx, const uint8_t *buf, uint8_t data_length)
 {
-	if ((NOT_INITTED == UART_init_state[UARTx]) || (UART_STATE_BUSY == UART_state_tx[UARTx]) || (NULL == buf) || (0 == data_length) || (USART1 > UARTx) || (USART6 < UARTx))
+	if (
+		(NOT_INITTED == UART_init_state[UARTx])
+		|| (UART_STATE_BUSY == UART_state_tx[UARTx])
+		|| (NULL == buf)
+		|| (0 == data_length) 
+		|| ((USART1 > UARTx) || (USART6 < UARTx))
+	)
 	{
 		return NOT_OK;
 	}
@@ -363,7 +403,6 @@ bool UART_transmit(UARTx_t UARTx, const uint8_t *buf, uint8_t data_length)
 			.channel = UART_Stream_info_tx_st[UARTx].channel
 		};
 		
-		UART_state_tx[UARTx] = UART_STATE_BUSY;
 		DMA_transfer
 		(
 			Stream_info_st, 
@@ -373,20 +412,27 @@ bool UART_transmit(UARTx_t UARTx, const uint8_t *buf, uint8_t data_length)
 				.mem_addr = (volatile uint8_t *)buf
 			}
 		);
+		
+		// Enable DMA transmitter
+		SET_BIT(USART_reg[UARTx]->CR3, 7U);
+		// Enable Transmitter
+		SET_BIT(USART_reg[UARTx]->CR1, 3U);
+		UART_state_tx[UARTx] = UART_STATE_BUSY;
 	}
 
 	return OK;
 }
 
-void UART_Read(UARTx_t UARTx, uint8_t *buf, uint8_t data_length)
+bool UART_Read(UARTx_t UARTx, uint8_t *buf, uint8_t data_length)
 {
 	if (true == UART_recv_buf[UARTx].isEmpty)
 	{
-		return;
+		return NOT_OK;
 	}
 	else
 	{
-		uint8_t index = 0;
+		uint8_t front_temp_u8;
+		uint8_t index_u8 = 0;
 
 		// Disable DMA Stream
 		CLEAR_BIT(DMA_reg[UART_Stream_info_rx_st[UARTx].DMAx]->S[UART_Stream_info_rx_st[UARTx].stream].CR, 0U);
@@ -394,48 +440,58 @@ void UART_Read(UARTx_t UARTx, uint8_t *buf, uint8_t data_length)
 		// Disable Interrupt
 		NVIC_ICER_setVal(UARTx_Interrupt_line[UARTx]);
 
-		if (data_length > ARR_SIZE)
+		if (data_length > sizeof(UART_recv_buf[UARTx].buf))
 		{
-			data_length = ARR_SIZE;
-		}
-
-		if (UART_recv_buf[UARTx].rear >= data_length)
-		{
-			UART_recv_buf[UARTx].front = UART_recv_buf[UARTx].rear - data_length;
+			data_length = sizeof(UART_recv_buf[UARTx].buf);
 		}
 		else
 		{
-			if (UART_recv_buf[UARTx].overrun)
-			{
-				UART_recv_buf[UARTx].front = ARR_SIZE - data_length + UART_recv_buf[UARTx].rear;
-			}
-			else
-			{
-				UART_recv_buf[UARTx].front = 0;
-			}
+			//do nothing
 		}
 
-		while (false == UART_recv_buf[UARTx].isEmpty)
+		if (
+			(UART_recv_buf[UARTx].front <= UART_recv_buf[UARTx].rear)
+			&& (data_length < (UART_recv_buf[UARTx].rear - UART_recv_buf[UARTx].front + 1))
+		)
 		{
-			buf[index++] = UART_recv_buf[UARTx].buf[UART_recv_buf[UARTx].front];
-			UART_recv_buf[UARTx].front = (UART_recv_buf[UARTx].front + 1) % ARR_SIZE;
-
-			if (UART_recv_buf[UARTx].front == UART_recv_buf[UARTx].rear)
-			{
-				UART_recv_buf[UARTx].isEmpty = true;
-			}
+			front_temp_u8 = UART_recv_buf[UARTx].rear + 1 - data_length;
+		}
+		else if (
+			(true == UART_recv_buf[UARTx].overrun)
+			&& (data_length < (sizeof(UART_recv_buf[UARTx].buf) - UART_recv_buf[UARTx].front + UART_recv_buf[UARTx].rear + 1))
+		)
+		{
+			front_temp_u8 = (sizeof(UART_recv_buf[UARTx].buf) + UART_recv_buf[UARTx].rear + 1 - data_length) % sizeof(UART_recv_buf[UARTx].buf);
+		}
+		else
+		{
+			front_temp_u8 = UART_recv_buf[UARTx].front;
 		}
 
-		UART_recv_buf[UARTx].isFull = false;
+		while (1)
+		{
+			buf[index_u8] = UART_recv_buf[UARTx].buf[front_temp_u8];
+
+			if (front_temp_u8 == UART_recv_buf[UARTx].rear)
+			{
+				break;
+			}
+
+			front_temp_u8 = (front_temp_u8 + 1) % sizeof(UART_recv_buf[UARTx].buf);
+			index_u8 ++;
+		}
+		
+		UART_recv_buf[UARTx].front = (UART_recv_buf[UARTx].rear + 1) % sizeof(UART_recv_buf[UARTx].buf);
 		UART_recv_buf[UARTx].overrun = false;
-		UART_recv_buf[UARTx].front = 0;
-		UART_recv_buf[UARTx].rear = 0;
+		UART_recv_buf[UARTx].isEmpty = true;
+		UART_recv_buf[UARTx].isFull = false;
 		isUpdated_UART[UARTx] = false;
-	    memset((void*)UART_recv_buf[UARTx].buf, 0, ARR_SIZE * sizeof(*UART_recv_buf[UARTx].buf));
 
 		//Enable Stream
 		SET_BIT(DMA_reg[UART_Stream_info_rx_st[UARTx].DMAx]->S[UART_Stream_info_rx_st[UARTx].stream].CR, 0U);
 		// Enable Interrupt
 		NVIC_ISER_setVal(UARTx_Interrupt_line[UARTx]);
 	}
+
+	return OK;
 }

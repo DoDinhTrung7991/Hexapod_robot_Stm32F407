@@ -16,6 +16,6 @@ typedef struct
     volatile uint32_t I2SPR;
 } SPI_t;
 
-extern SPI_t *SPI[3];
+extern SPI_t * const SPI[3];
 
 #endif

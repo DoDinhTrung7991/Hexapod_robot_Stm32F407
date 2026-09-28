@@ -6,7 +6,6 @@
 #include "GPIO.h"
 #include "DMA.h"
 #include "delay_us.h"
-#include <string.h>
 
 typedef struct
 {
@@ -14,21 +13,21 @@ typedef struct
 	uint8_t pos_u8;
 } GPIOx_posY_t;
 
-GPIOx_posY_t GPIO_SCL_st[3] =
+static const GPIOx_posY_t GPIO_SCL_st[3] =
 {
 	{GPIOBEN, 8},
 	{GPIOBEN, 10},
 	{GPIOAEN, 8}
 };
 
-GPIOx_posY_t GPIO_SDA_st[3] =
+static const GPIOx_posY_t GPIO_SDA_st[3] =
 {
 	{GPIOBEN, 9},
 	{GPIOBEN, 11},
 	{GPIOCEN, 9}
 };
 
-I2C_t *I2C_reg[3] = 
+I2C_t * const I2C_reg[3] = 
 {
     (I2C_t *)0x40005400,
     (I2C_t *)0x40005800,
@@ -70,12 +69,12 @@ __attribute__((section(".ccmram_data")))volatile uint8_t isUpdated_I2C[3] =
 	false
 };
 
-const stream_channel_t I2C_Stream_info_tx_st[3] =
+static const stream_channel_t I2C_Stream_info_tx_st[3] =
 {
 	// I2C1
 	{
 		.DMAx = DMA1,
-		.stream = Stream_7,
+		.stream = Stream_6,	// Stream_7
 		.channel = 1
 	},
 	// I2C2
@@ -92,18 +91,18 @@ const stream_channel_t I2C_Stream_info_tx_st[3] =
 	}
 };
 
-const stream_channel_t I2C_Stream_info_rx_st[3] =
+static const stream_channel_t I2C_Stream_info_rx_st[3] =
 {
 	// I2C1
 	{
 		.DMAx = DMA1,
-		.stream = Stream_5,
+		.stream = Stream_5,	// Stream_0
 		.channel = 1
 	},
 	// I2C2
 	{
 		.DMAx = DMA1,
-		.stream = Stream_3,
+		.stream = Stream_3,	// Stream_2
 		.channel = 7
 	},
 	// I2C3
@@ -114,9 +113,9 @@ const stream_channel_t I2C_Stream_info_rx_st[3] =
 	}
 };
 
-static unsigned int RCC_APBxENR_I2C_pos_arr[3] = {21U, 22U, 23U};
+static const unsigned int RCC_APBxENR_I2C_pos_arr[3] = {21U, 22U, 23U};
 
-const unsigned int I2Cx_Interrupt_line[3][2] =
+static const peripheral_Selection_t I2Cx_Interrupt_line[3][2] =
 {
 	{I2C1_EV, I2C1_ER},
 	{I2C2_EV, I2C2_ER},
@@ -313,7 +312,7 @@ bool I2C_master_send(I2Cx_t I2Cx_en, uint8_t addr_u8, const uint8_t *buf, uint32
 
 bool I2C_master_recv(I2Cx_t I2Cx_en, uint8_t addr_u8, uint32_t length_u32)
 {
-	if (length_u32 > ARR_SIZE)
+	if (length_u32 > sizeof(I2C_recv_buf[I2Cx_en]))
 	{
 		return NOT_OK;
 	}
@@ -372,7 +371,10 @@ bool I2C_master_recv(I2Cx_t I2Cx_en, uint8_t addr_u8, uint32_t length_u32)
 	// Clear Buffer interrupt enable
 	CLEAR_BIT(I2C_reg[I2Cx_en]->CR2, 10U);
 	// Reset buffer BEFORE starting DMA to avoid race conditions
-	memset((void*)I2C_recv_buf[I2Cx_en], 0, ARR_SIZE * sizeof(*I2C_recv_buf[I2Cx_en]));
+	for (unsigned int i = 0; i < sizeof(I2C_recv_buf[I2Cx_en]); i++)
+    {
+        I2C_recv_buf[I2Cx_en][i] = 0;
+    }
 	// Write address: LSB = 1 for receiver
 	I2C_addr[I2Cx_en] = ((addr_u8 << 1U) | 1U);
 	// Setup DMA

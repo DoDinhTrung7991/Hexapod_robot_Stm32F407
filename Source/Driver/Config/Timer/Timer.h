@@ -4,12 +4,13 @@
 #include "stdUtility.h"
 #include "bit_operator.h"
 #include "TIM_header.h"
+#include "GPIO.h"
 
 /*Macro - Start*/
 
 #define MAX_TIMER_NUMBER 14U
 #define MAX_CHANNEL_NUMBER 4U
-#define ARR_CONST 199U
+#define ARR_CONST 99UL
 
 /*Macro - End*/
 
@@ -41,6 +42,15 @@ typedef enum
 	CHANN_4
 } TIM_Channel_t;
 
+typedef struct
+{
+    GPIO_ENABLE_t GPIOx_en;
+    uint8_t pos_u8;
+	AFRx_t AFx_en;
+} GPIO_TimerX_t;
+
+extern GPIO_TimerX_t GPIO_TimerX_channel[14][4];
+
 /*Data type - End*/
 
 /*Variable - Start*/
@@ -57,7 +67,7 @@ bool Timer_init(TIMx_t TIMx_en, uint8_t frequency_u8, bool is_Interrupt_b);
 
 // PWM
 bool PWM_init(TIMx_t TIMx_en, TIM_Channel_t Channel, uint8_t frequency_u8);
-bool PWM_Generation(TIMx_t TIMx_en, TIM_Channel_t Channel, uint8_t activePercent_u8_int, uint8_t activePercent_floating_point);
+bool PWM_Generation(TIMx_t TIMx_en, TIM_Channel_t Channel, float activePercent);
 
 /*Function - End*/
 

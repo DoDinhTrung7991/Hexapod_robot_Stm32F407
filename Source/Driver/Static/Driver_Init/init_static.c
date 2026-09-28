@@ -31,11 +31,11 @@ bool initConfig(priConf_t priConf_st, oscillatorConf_t oscillatorConf_st, clockC
 
 	// DSB (Data Synchronization Barrier):
 	// Make sure data written into SCB_reg->CPACR done 100%
-	__asm__ volatile ("dsb 0xF" ::: "memory");
+	__DSB();
 	// ISB (Instruction Synchronization Barrier):
 	// Xóa sạch Pipeline của CPU, nạp lại các lệnh phía sau.
 	// Đảm bảo các lệnh FPU tiếp theo nhận biết FPU đã bật.
-	__asm__ volatile ("isb 0xF" ::: "memory");
+	__ISB();
 
 	if (OK != oscSetup(oscillatorConf_st))
 	{

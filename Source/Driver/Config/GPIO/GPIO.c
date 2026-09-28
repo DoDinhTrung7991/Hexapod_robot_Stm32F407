@@ -1,7 +1,7 @@
 #include "GPIO.h"
 #include "bit_operator.h"
 
-GPIOx_t *GPIO_reg[9] = {
+GPIOx_t * const GPIO_reg[9] = {
 	(GPIOx_t *)0x40020000,
 	(GPIOx_t *)0x40020400,
 	(GPIOx_t *)0x40020800,

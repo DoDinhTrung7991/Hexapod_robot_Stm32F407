@@ -1,9 +1,13 @@
-#include <string.h>
 #include "queue.h"
 
 void queue_init(queue_t* queue_ptr)
 {
-    memset(queue_ptr, 0, sizeof(queue_t));
+    for (unsigned int i = 0; i < sizeof(queue_ptr->buf); i++)
+    {
+        queue_ptr->buf[i] = 0;
+    }
+
+    queue_ptr->front = queue_ptr->rear = 0;
     queue_ptr->isEmpty = true;
     queue_ptr->isFull = false;
 }
@@ -15,12 +19,12 @@ void queue_enqueue(queue_t* queue_ptr, uint8_t* str_ptr, uint8_t numToEnqueue)
         if (queue_ptr->isFull)
         {
             queue_ptr->overrun = true;
-            queue_ptr->front = (queue_ptr->front + 1) % ARR_SIZE;
+            queue_ptr->front = (queue_ptr->front + 1) % sizeof(queue_ptr->buf);
         }
 
         if (!queue_ptr->isEmpty)
         {
-            queue_ptr->rear = (queue_ptr->rear + 1) % ARR_SIZE;
+            queue_ptr->rear = (queue_ptr->rear + 1) % sizeof(queue_ptr->buf);
         }
         else
         {
@@ -29,7 +33,7 @@ void queue_enqueue(queue_t* queue_ptr, uint8_t* str_ptr, uint8_t numToEnqueue)
 
         queue_ptr->buf[queue_ptr->rear] = str_ptr[index];
 
-        if (((queue_ptr->rear + 1) % ARR_SIZE) == queue_ptr->front)
+        if (((queue_ptr->rear + 1) % sizeof(queue_ptr->buf)) == queue_ptr->front)
         {
             queue_ptr->isFull = true;
         }
@@ -57,7 +61,7 @@ uint8_t queue_dequeue(queue_t* queue_ptr, uint8_t* str_ptr, uint8_t numToDequeue
         }
         else
         {
-            queue_ptr->front = (queue_ptr->front + 1) % ARR_SIZE;
+            queue_ptr->front = (queue_ptr->front + 1) % sizeof(queue_ptr->buf);
         }
 
         index++;
@@ -75,7 +79,7 @@ uint8_t queue_get_size(queue_t* queue_ptr)
 
     if (queue_ptr->isFull)
     {
-        return ARR_SIZE;
+        return sizeof(queue_ptr->buf);
     }
 
     if (queue_ptr->rear > queue_ptr->front)
@@ -84,7 +88,7 @@ uint8_t queue_get_size(queue_t* queue_ptr)
     }
 
     // Wraparound case
-    return (ARR_SIZE - queue_ptr->front) + queue_ptr->rear + 1;
+    return (sizeof(queue_ptr->buf) - queue_ptr->front) + queue_ptr->rear + 1;
 }
 
 void queue_clear_overrun(queue_t* queue_ptr)

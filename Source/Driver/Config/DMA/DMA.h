@@ -6,7 +6,25 @@
 #include "DMA_header.h"
 #include "Interrupt.h"
 
-extern DMA_t *DMA_reg[2];
+extern DMA_t * const DMA_reg[2];
+
+typedef enum
+{
+	interruptFlag_0or4 = 0,
+	interruptFlag_1or5 = 6,
+	interruptFlag_2or6 = 16,
+	interruptFlag_3or7 = 22
+} clearFlag_shiftBit_t;
+
+typedef enum
+{
+	FEIFx,
+    Reserved,
+    DMEIFx,
+    TEIFx,
+    HTIFx,
+    TCIFx
+} DMA_interrupt_bit_pos_t;
 
 typedef enum
 {

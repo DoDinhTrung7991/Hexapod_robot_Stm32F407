@@ -7,12 +7,6 @@
 #include "init_static.h"
 #include "Interrupt.h"
 
-typedef struct
-{
-    GPIO_ENABLE_t GPIOx_en;
-    uint8_t pos_u8;
-} GPIO_SPI_t;
-
 typedef enum
 {
     SPI1,

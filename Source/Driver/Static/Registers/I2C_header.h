@@ -17,6 +17,6 @@ typedef struct I2C_str
     volatile uint32_t FLTR;
 } I2C_t;
 
-extern I2C_t *I2C_reg[3];
+extern I2C_t * const I2C_reg[3];
 
 #endif

@@ -30,8 +30,6 @@ bool Ex_Interrupt(GPIO_ENABLE_t GPIOx_en, uint8_t pos_u8, GPIO_pullDir_t GPIO_pu
 		return returnVal;
 	}
 
-    GPIO_setup(GPIOx_en, pos_u8, IN, AF0, PP, GPIO_pullDir_en);
-
     switch (EvRaising_Dir_en)
     {
         case Falling_Edge:
