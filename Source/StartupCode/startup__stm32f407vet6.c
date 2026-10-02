@@ -258,15 +258,25 @@ void EXTI0_Handler(void)
 
 void EXTI3_Handler(void)
 {
+    if (0 == GPIO_IN_getVal(GPIOEEN, 3))
+    {
+        GPIO_OUT_setVal(GPIOAEN, 6, 0);
+    }
+
 	if (READ_REG(EXTI_reg->PR, 1UL, 3U))
 	{
-		// Clear the pending bit by writing 1 to it
+        // Clear the pending bit by writing 1 to it
         SET_BIT(EXTI_reg->PR, 3U);
 	}
 }
 
 void EXTI4_Handler(void)
 {
+    if (0 == GPIO_IN_getVal(GPIOEEN, 4))
+    {
+        GPIO_OUT_setVal(GPIOAEN, 6, 1);
+    }
+
 	if (READ_REG(EXTI_reg->PR, 1UL, 4U))
 	{
 		// Clear the pending bit by writing 1 to it
