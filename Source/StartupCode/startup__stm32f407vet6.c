@@ -282,14 +282,14 @@ void EXTI15_10_Handler(void)
         CLEAR_BIT(EXTI_reg->IMR, 10U);
         SET_BIT(EXTI_reg->PR, 10U);
 
-        UART_state_rx[USART1] = UART_STATE_BUSY;
+        // UART_state_rx[USART1] = UART_STATE_BUSY;
     }
 }
 
 void USART1_Handler(void)
 {
     // Check IDLE flag
-    if (READ_REG(USART_reg[USART1]->SR, 1UL, 4U) && (UART_STATE_BUSY == UART_state_rx[USART1]))
+    if (READ_REG(USART_reg[USART1]->SR, 1UL, 4U) /* && (UART_STATE_BUSY == UART_state_rx[USART1]) */)
     {
         UART_recv_buf[USART1].isEmpty = false;
         UART_recv_buf[USART1].rear = (uint8_t)(sizeof(UART_recv_buf[USART1].buf) - DMA_reg[DMA2]->S[5].NDTR - 1);
@@ -316,8 +316,8 @@ void USART1_Handler(void)
         (void)temp;
         
         //Enable EXTI
-        SET_BIT(EXTI_reg->IMR, 10U);
-        UART_state_rx[USART1] = UART_STATE_READY;
+        // SET_BIT(EXTI_reg->IMR, 10U);
+        // UART_state_rx[USART1] = UART_STATE_READY;
     }
 
     // Check Overrun error, Noise ,Framing error and Parity error

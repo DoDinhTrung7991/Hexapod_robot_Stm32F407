@@ -18,7 +18,7 @@ void NVIC_ICER_setVal(peripheral_Selection_t peripheral_Selection_en)
     SET_BIT(NVIC_reg->ICER[bytePos], bitPos);
 }
 
-bool Ex_Interrupt(GPIO_ENABLE_t GPIOx_en, uint8_t pos_u8, GPIO_pullDir_t GPIO_pullDir_en, EvRaising_Dir_t EvRaising_Dir_en)
+bool Ex_Interrupt(GPIO_ENABLE_t GPIOx_en, uint8_t pos_u8, EvRaising_Dir_t EvRaising_Dir_en)
 {
     bool returnVal = OK;
     uint8_t EXTICR_i_u8 = 0;

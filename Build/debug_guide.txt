@@ -1,3 +1,4 @@
+########## Debug ###########################
 #	gdb-multiarch Hexapod_Robot_gdb.elf
 # 	target extended-remote :3333	#Connect to stlink port 3333
 # 	monitor reset halt				#Reset and halt
@@ -21,6 +22,16 @@
 # 	symbol-file your_project.elf  # Đảm bảo GDB đã nạp symbol
 # 	info functions: Kiểm tra cấu trúc File ELF
 #	directory: Xóa toàn bộ danh sách để làm lại từ đầu
+
+########## Connect to HC-05/06 #############
+#   bluetoothctl
+#   power on
+#   agent on
+#   default-agent
+#   scan on
+
 #   sudo rfcomm bind /dev/rfcomm0 00:20:10:08:27:DB 1
 #   sudo rfcomm connect /dev/rfcomm0 00:20:10:08:27:DB
 #   sudo rfcomm release /dev/rfcomm0
+
+#   sudo picocom -b 115200 /dev/rfcomm0

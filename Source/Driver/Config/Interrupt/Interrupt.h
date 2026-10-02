@@ -93,6 +93,6 @@ extern volatile uint32_t SysTick_cnt_u32;
 
 void NVIC_ISER_setVal(peripheral_Selection_t peripheral_Selection_en);
 void NVIC_ICER_setVal(peripheral_Selection_t peripheral_Selection_en);
-bool Ex_Interrupt(GPIO_ENABLE_t GPIOx_en, uint8_t pos_u8, GPIO_pullDir_t GPIO_pullDir_en, EvRaising_Dir_t EvRaising_Dir_en);
+bool Ex_Interrupt(GPIO_ENABLE_t GPIOx_en, uint8_t pos_u8, EvRaising_Dir_t EvRaising_Dir_en);
 
 #endif

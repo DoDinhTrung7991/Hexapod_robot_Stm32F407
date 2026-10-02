@@ -178,7 +178,7 @@ static const peripheral_Selection_t UARTx_Interrupt_line[6] =
 	USART6_Interrupt
 };
 
-bool UART_init(UARTx_t UARTx, uint32_t baudrate)
+bool UART_init(UARTx_t UARTx, uint32_t baudrate_u32)
 {
 	UART_init_state[UARTx] = NOT_INITTED;
 	static bool is_Init_done_once[6] = {false, false, false, false, false, false};
@@ -264,8 +264,7 @@ bool UART_init(UARTx_t UARTx, uint32_t baudrate)
 			Ex_Interrupt(
 				GPIO_UART_rx_st[UARTx].GPIOx_en,
 				GPIO_UART_rx_st[UARTx].pos_u8,
-				NoP,
-				Rising_Edge
+				Falling_Edge
 			);
 
 			// Enable clock for USART peripheral
@@ -301,9 +300,9 @@ bool UART_init(UARTx_t UARTx, uint32_t baudrate)
 			return NOT_OK;
 		}
 
-		DIV_Mantissa_u32 = fck_u32 / (8 * (2 - over8_u32) * baudrate);
+		DIV_Mantissa_u32 = fck_u32 / (8 * (2 - over8_u32) * baudrate_u32);
 											//DIV_Fraction_u32 times 100
-		DIV_Fraction_u32 = ((((fck_u32 * 100) / (8 * (2 - over8_u32) * baudrate)) % 100) * (2 - over8_u32) + 50) / 100;
+		DIV_Fraction_u32 = ((((fck_u32 * 1000) / (8 * (2 - over8_u32) * baudrate_u32)) % 1000) * 8 * (2 - over8_u32) + 500) / 1000;
 
 		if (over8_u32)
 		{
