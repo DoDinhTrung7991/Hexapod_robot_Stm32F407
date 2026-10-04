@@ -1,3 +1,6 @@
+#ifndef _IWDG_H_
+#define _IWDG_H_
+
 #include "stdUtility.h"
 
 typedef enum
@@ -13,3 +16,5 @@ typedef enum
 
 bool IWDG_init(IWDG_timeout_t timeout);
 void IWDG_reset(void);
+
+#endif
