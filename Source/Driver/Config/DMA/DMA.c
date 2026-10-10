@@ -2,6 +2,12 @@
 
 #define INTERRUPT_CLEARMASK 0x3DUL
 
+DMA_t * const DMA_reg[2] =
+{
+	(DMA_t*)0x40026000,
+	(DMA_t*)0x40026400
+};
+
 const static uint8_t clearFlag_shiftBit_arr[4] =
 {
 	interruptFlag_0or4,
@@ -10,10 +16,28 @@ const static uint8_t clearFlag_shiftBit_arr[4] =
 	interruptFlag_3or7
 };
 
-DMA_t * const DMA_reg[2] =
+static const peripheral_Selection_t DMAx_Interrupt_line[2][8] =
 {
-	(DMA_t*)0x40026000,
-	(DMA_t*)0x40026400
+	{
+		DMA1_Stream0,
+		DMA1_Stream1,
+		DMA1_Stream2,
+		DMA1_Stream3,
+		DMA1_Stream4,
+		DMA1_Stream5,
+		DMA1_Stream6,
+		DMA1_Stream7
+	},
+	{
+		DMA2_Stream0,
+		DMA2_Stream1,
+		DMA2_Stream2,
+		DMA2_Stream3,
+		DMA2_Stream4,
+		DMA2_Stream5,
+		DMA2_Stream6,
+		DMA2_Stream7
+	}
 };
 
 static unsigned int RCC_AHBxENR_DMA_pos_arr[2] = {21U, 22U};
@@ -46,8 +70,14 @@ bool DMA_direct_init(DMA_direct_param_t DMA_direct_param_st)
 
 	// Direct mode enable
 	CLEAR_BIT(DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].FCR, 2U);
+
 	// Channel selection
-	WRITE_REG(DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].CR, 7UL, 25U, DMA_direct_param_st.Stream_info_st.channel);
+	WRITE_REG(
+		DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].CR,
+		7UL,
+		25U,
+		DMA_direct_param_st.Stream_info_st.channel
+	);
 
 	// Double buffer mode
 	if (enable == DMA_direct_param_st.data_info_st.double_buffer_en)
@@ -59,12 +89,39 @@ bool DMA_direct_init(DMA_direct_param_t DMA_direct_param_st)
 		CLEAR_BIT(DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].CR, 18U);
 	}
 
+	// Circular mode mode
+	if (enable == DMA_direct_param_st.data_info_st.circular_mode_en)
+	{
+		SET_BIT(DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].CR, 8U);
+	}
+	else
+	{
+		CLEAR_BIT(DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].CR, 8U);
+	}
+
 	// Priority level
-	WRITE_REG(DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].CR, 3UL, 16U, DMA_direct_param_st.priority_interrupt_st.stream_priority);
+	WRITE_REG(
+		DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].CR,
+		3UL,
+		16U,
+		DMA_direct_param_st.priority_interrupt_st.stream_priority
+	);
+
 	// Memory data size
-	WRITE_REG(DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].CR, 3UL, 13U, DMA_direct_param_st.data_info_st.mem_data_size);
+	WRITE_REG(
+		DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].CR,
+		3UL,
+		13U,
+		DMA_direct_param_st.data_info_st.mem_data_size
+	);
+
 	// Peripheral data size
-	WRITE_REG(DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].CR, 3UL, 11U, DMA_direct_param_st.data_info_st.peri_data_size);
+	WRITE_REG(
+		DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].CR,
+		3UL,
+		11U,
+		DMA_direct_param_st.data_info_st.peri_data_size
+	);
 
 	// Memory increment mode
 	switch (DMA_direct_param_st.data_info_st.mem_mode)
@@ -75,12 +132,6 @@ bool DMA_direct_init(DMA_direct_param_t DMA_direct_param_st)
 
 		case not_fixed:
 			SET_BIT(DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].CR, 10U);
-			break;
-		
-		case circular:
-			SET_BIT(DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].CR, 10U);
-			// Circular mode
-			SET_BIT(DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].CR, 8U);
 			break;
 
 		default:
@@ -99,13 +150,6 @@ bool DMA_direct_init(DMA_direct_param_t DMA_direct_param_st)
 		case not_fixed:
 			// PINC: Peripheral increment mode
 			SET_BIT(DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].CR, 9U);
-			break;
-		
-		case circular:
-			// PINC: Peripheral increment mode
-			SET_BIT(DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].CR, 9U);
-			// Circular mode
-			SET_BIT(DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].CR, 8U);
 			break;
 
 		default:
@@ -135,11 +179,8 @@ bool DMA_direct_init(DMA_direct_param_t DMA_direct_param_st)
 	// Transfer error interrupt enable
 	// Direct mode error interrupt enable
 	WRITE_REG(DMA_reg[DMA_direct_param_st.Stream_info_st.DMAx]->S[DMA_direct_param_st.Stream_info_st.stream].CR, 0xFUL, 1U, DMA_direct_param_st.priority_interrupt_st.interrupt_en_u8);
-
-	if (DMA_direct_param_st.priority_interrupt_st.interrupt_en_u8)
-	{
-		Enable_DMA_interruptLine(DMA_direct_param_st.Stream_info_st);
-	}
+	// Enable interrupt line
+	NVIC_ISER_setVal(DMAx_Interrupt_line[DMA_direct_param_st.Stream_info_st.DMAx][DMA_direct_param_st.Stream_info_st.stream]);
 
 	return OK;
 }
@@ -183,6 +224,16 @@ bool DMA_FIFO_init(DMA_FIFO_param_t DMA_FIFO_param_st)
 		CLEAR_BIT(DMA_reg[DMA_FIFO_param_st.Stream_info_st.DMAx]->S[DMA_FIFO_param_st.Stream_info_st.stream].CR, 18U);
 	}
 
+	// Circular mode mode
+	if (enable == DMA_FIFO_param_st.data_info_st.circular_mode_en)
+	{
+		SET_BIT(DMA_reg[DMA_FIFO_param_st.Stream_info_st.DMAx]->S[DMA_FIFO_param_st.Stream_info_st.stream].CR, 8U);
+	}
+	else
+	{
+		CLEAR_BIT(DMA_reg[DMA_FIFO_param_st.Stream_info_st.DMAx]->S[DMA_FIFO_param_st.Stream_info_st.stream].CR, 8U);
+	}
+
 	// Priority level
 	WRITE_REG(DMA_reg[DMA_FIFO_param_st.Stream_info_st.DMAx]->S[DMA_FIFO_param_st.Stream_info_st.stream].CR, 3UL, 16U, DMA_FIFO_param_st.priority_interrupt_st.stream_priority);
 	// Memory burst transfer configuration
@@ -215,12 +266,6 @@ bool DMA_FIFO_init(DMA_FIFO_param_t DMA_FIFO_param_st)
 		case not_fixed:
 			SET_BIT(DMA_reg[DMA_FIFO_param_st.Stream_info_st.DMAx]->S[DMA_FIFO_param_st.Stream_info_st.stream].CR, 10U);
 			break;
-		
-		case circular:
-			SET_BIT(DMA_reg[DMA_FIFO_param_st.Stream_info_st.DMAx]->S[DMA_FIFO_param_st.Stream_info_st.stream].CR, 10U);
-			// Circular mode
-			SET_BIT(DMA_reg[DMA_FIFO_param_st.Stream_info_st.DMAx]->S[DMA_FIFO_param_st.Stream_info_st.stream].CR, 8U);
-			break;
 
 		default:
 			return NOT_OK;
@@ -236,12 +281,6 @@ bool DMA_FIFO_init(DMA_FIFO_param_t DMA_FIFO_param_st)
 
 		case not_fixed:
 			SET_BIT(DMA_reg[DMA_FIFO_param_st.Stream_info_st.DMAx]->S[DMA_FIFO_param_st.Stream_info_st.stream].CR, 9U);
-			break;
-		
-		case circular:
-			SET_BIT(DMA_reg[DMA_FIFO_param_st.Stream_info_st.DMAx]->S[DMA_FIFO_param_st.Stream_info_st.stream].CR, 9U);
-			// Circular mode
-			SET_BIT(DMA_reg[DMA_FIFO_param_st.Stream_info_st.DMAx]->S[DMA_FIFO_param_st.Stream_info_st.stream].CR, 8U);
 			break;
 
 		default:
@@ -271,11 +310,8 @@ bool DMA_FIFO_init(DMA_FIFO_param_t DMA_FIFO_param_st)
 	// Transfer error interrupt enable
 	// Direct mode error interrupt enable
 	WRITE_REG(DMA_reg[DMA_FIFO_param_st.Stream_info_st.DMAx]->S[DMA_FIFO_param_st.Stream_info_st.stream].CR, 0xFUL, 1U, DMA_FIFO_param_st.priority_interrupt_st.interrupt_en_u8);
-
-	if (DMA_FIFO_param_st.priority_interrupt_st.interrupt_en_u8)
-	{
-		Enable_DMA_interruptLine(DMA_FIFO_param_st.Stream_info_st);
-	}
+	// Enable interrupt line
+	NVIC_ISER_setVal(DMAx_Interrupt_line[DMA_FIFO_param_st.Stream_info_st.DMAx][DMA_FIFO_param_st.Stream_info_st.stream]);
 
 	WRITE_REG(DMA_reg[DMA_FIFO_param_st.Stream_info_st.DMAx]->S[DMA_FIFO_param_st.Stream_info_st.stream].FCR, 3UL, 0U, DMA_FIFO_param_st.FTH_en);
 
@@ -318,34 +354,8 @@ void DMA_transfer(stream_channel_t Stream_info_st, buffer_t buffer_info_st)
 
 static void Enable_DMA_interruptLine(stream_channel_t Stream_info_st)
 {
-	static const peripheral_Selection_t DMAx_Interrupt_line[2][8] =
-	{
-		{
-			DMA1_Stream0,
-			DMA1_Stream1,
-			DMA1_Stream2,
-			DMA1_Stream3,
-			DMA1_Stream4,
-			DMA1_Stream5,
-			DMA1_Stream6,
-			DMA1_Stream7
-		},
-		{
-			DMA2_Stream0,
-			DMA2_Stream1,
-			DMA2_Stream2,
-			DMA2_Stream3,
-			DMA2_Stream4,
-			DMA2_Stream5,
-			DMA2_Stream6,
-			DMA2_Stream7
-		}
-	};
-
 	uint8_t pos_u8 = Stream_info_st.stream / 4;
 	uint8_t clearPos_u8 = Stream_info_st.stream % 4;
 
 	WRITE_REG(DMA_reg[Stream_info_st.DMAx]->IFCR[pos_u8], INTERRUPT_CLEARMASK, clearFlag_shiftBit_arr[clearPos_u8], INTERRUPT_CLEARMASK);
-	// Enable interrupt line
-	NVIC_ISER_setVal(DMAx_Interrupt_line[Stream_info_st.DMAx][Stream_info_st.stream]);
 }

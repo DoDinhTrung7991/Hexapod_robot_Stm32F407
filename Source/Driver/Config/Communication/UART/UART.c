@@ -202,8 +202,9 @@ bool UART_init(UARTx_t UARTx, uint32_t baudrate_u32)
 				},
 				{
 					.double_buffer_en = disable,
-					.peri_data_size = half_word,
-					.mem_data_size = half_word,
+					.circular_mode_en = disable,
+					.peri_data_size = byte,
+					.mem_data_size = byte,
 					.peri_mode = fixed,
 					.mem_mode = not_fixed
 				},
@@ -226,10 +227,11 @@ bool UART_init(UARTx_t UARTx, uint32_t baudrate_u32)
 				},
 				{
 					.double_buffer_en = disable,
-					.peri_data_size = half_word,
-					.mem_data_size = half_word,
+					.circular_mode_en = enable,
+					.peri_data_size = byte,
+					.mem_data_size = byte,
 					.peri_mode = fixed,
-					.mem_mode = circular
+					.mem_mode = not_fixed
 				},
 				{
 					.dir = peri_to_mem,
@@ -245,7 +247,7 @@ bool UART_init(UARTx_t UARTx, uint32_t baudrate_u32)
 			{
 				.data_length = sizeof(UART_recv_buf[UARTx].buf),
 				.peri_addr = &USART_reg[UARTx]->DR,
-				.mem_addr = UART_recv_buf[UARTx].buf
+				.mem_addr = (volatile uint32_t *)UART_recv_buf[UARTx].buf
 			};
 			
 			// Setting for DMA
@@ -257,8 +259,8 @@ bool UART_init(UARTx_t UARTx, uint32_t baudrate_u32)
 			DMA_transfer(DMA_direct_param_rx_st.Stream_info_st, buffer_info_rx_st);
 
 			// Setup GPIO for USART ports
-			GPIO_setup(GPIO_UART_tx_st[UARTx].GPIOx_en, GPIO_UART_tx_st[UARTx].pos_u8, AF, GPIO_UART_tx_st[UARTx].AFx_en, PP, NoP);	// TX
-			GPIO_setup(GPIO_UART_rx_st[UARTx].GPIOx_en, GPIO_UART_rx_st[UARTx].pos_u8, AF, GPIO_UART_rx_st[UARTx].AFx_en, PP, NoP);	// RX
+			GPIO_setup(GPIO_UART_tx_st[UARTx].GPIOx_en, GPIO_UART_tx_st[UARTx].pos_u8, AF, GPIO_UART_tx_st[UARTx].AFx_en, PP, PU);	// TX
+			GPIO_setup(GPIO_UART_rx_st[UARTx].GPIOx_en, GPIO_UART_rx_st[UARTx].pos_u8, AF, GPIO_UART_rx_st[UARTx].AFx_en, PP, PU);	// RX
 
 			// Setup EXTI to detect Start bit of UART Rx
 			Ex_Interrupt(
@@ -395,20 +397,13 @@ bool UART_transmit(UARTx_t UARTx, const uint8_t *buf, uint8_t data_length)
 	}
 	else
 	{
-		stream_channel_t Stream_info_st =
-		{
-			.DMAx = UART_Stream_info_tx_st[UARTx].DMAx,
-			.stream = UART_Stream_info_tx_st[UARTx].stream,
-			.channel = UART_Stream_info_tx_st[UARTx].channel
-		};
-		
 		DMA_transfer
 		(
-			Stream_info_st, 
+			UART_Stream_info_tx_st[UARTx], 
 			(buffer_t){
 				.data_length = data_length,
 				.peri_addr = &USART_reg[UARTx]->DR,
-				.mem_addr = (volatile uint8_t *)buf
+				.mem_addr = (volatile uint32_t *)buf
 			}
 		);
 		
@@ -450,7 +445,7 @@ bool UART_Read(UARTx_t UARTx, uint8_t *buf, uint8_t data_length)
 
 		if (
 			(UART_recv_buf[UARTx].front <= UART_recv_buf[UARTx].rear)
-			&& (data_length < (UART_recv_buf[UARTx].rear - UART_recv_buf[UARTx].front + 1))
+			&& (data_length <= (UART_recv_buf[UARTx].rear - UART_recv_buf[UARTx].front + 1))
 		)
 		{
 			front_temp_u8 = UART_recv_buf[UARTx].rear + 1 - data_length;

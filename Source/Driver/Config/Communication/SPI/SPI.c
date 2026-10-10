@@ -135,6 +135,7 @@ bool SPI_init(SPIx_t SPIx_en, SPI_mode_t mode_en, SPI_sampling_mode_t SPI_sampli
 				},
 				{
 					.double_buffer_en = disable,
+					.circular_mode_en = disable,
 					.peri_data_size = byte,
 					.mem_data_size = byte,
 					.peri_mode = fixed,
@@ -159,6 +160,7 @@ bool SPI_init(SPIx_t SPIx_en, SPI_mode_t mode_en, SPI_sampling_mode_t SPI_sampli
 				},
 				{
 					.double_buffer_en = disable,
+					.circular_mode_en = disable,
 					.peri_data_size = byte,
 					.mem_data_size = byte,
 					.peri_mode = fixed,
@@ -257,7 +259,7 @@ bool SPI_send_receive(SPIx_t SPIx_en, const uint8_t *str, uint32_t length_u32)
 		{
 			.data_length = length_u32,
 			.peri_addr = &SPI[SPIx_en]->DR,
-			.mem_addr = (volatile uint8_t *)str
+			.mem_addr = (volatile uint32_t *)str
 		};
 
 		stream_channel_t Stream_info_tx_st =
@@ -271,7 +273,7 @@ bool SPI_send_receive(SPIx_t SPIx_en, const uint8_t *str, uint32_t length_u32)
 		{
 			.data_length = length_u32,
 			.peri_addr = &SPI[SPIx_en]->DR,
-			.mem_addr = (volatile uint8_t *)SPI_recv_buf[SPIx_en]
+			.mem_addr = (volatile uint32_t *)SPI_recv_buf[SPIx_en]
 		};
 
 		stream_channel_t Stream_info_rx_st =

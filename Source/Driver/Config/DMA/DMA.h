@@ -55,7 +55,7 @@ typedef enum
 {
     disable,
     enable
-} double_buffer_t;
+} enable_mode_t;
 
 typedef enum
 {
@@ -81,8 +81,7 @@ typedef enum
 typedef enum
 {
     fixed,
-    not_fixed,
-    circular
+    not_fixed
 } buffer_incr_mode_t;
 
 typedef enum
@@ -118,7 +117,7 @@ typedef struct
 {
     uint32_t data_length;
     volatile uint32_t *peri_addr;
-    volatile uint8_t *mem_addr;
+    volatile uint32_t *mem_addr;
 } buffer_t;
 
 typedef struct
@@ -130,7 +129,8 @@ typedef struct
 
 typedef struct
 {
-    double_buffer_t double_buffer_en;
+    enable_mode_t double_buffer_en;
+    enable_mode_t circular_mode_en;
     data_size_t peri_data_size;
     data_size_t mem_data_size;
     buffer_incr_mode_t peri_mode;
@@ -139,7 +139,8 @@ typedef struct
 
 typedef struct
 {
-    double_buffer_t double_buffer_en;
+    enable_mode_t double_buffer_en;
+    enable_mode_t circular_mode_en;
     BURST_t MBURST;
     BURST_t PBURST;
     peri_inc_offset_t peri_inc_offset_en;

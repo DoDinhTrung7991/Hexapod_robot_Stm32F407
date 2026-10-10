@@ -146,6 +146,7 @@ bool I2C_init(I2Cx_t I2Cx_en)
 				},
 				{
 					.double_buffer_en = disable,
+					.circular_mode_en = disable,
 					.peri_data_size = byte,
 					.mem_data_size = byte,
 					.peri_mode = fixed,
@@ -170,6 +171,7 @@ bool I2C_init(I2Cx_t I2Cx_en)
 				},
 				{
 					.double_buffer_en = disable,
+					.circular_mode_en = disable,
 					.peri_data_size = byte,
 					.mem_data_size = byte,
 					.peri_mode = fixed,
@@ -285,7 +287,7 @@ bool I2C_master_send(I2Cx_t I2Cx_en, uint8_t addr_u8, const uint8_t *buf, uint32
 	{
 		.data_length = length_u32,
 		.peri_addr = &I2C_reg[I2Cx_en]->DR,
-		.mem_addr = (volatile uint8_t *)buf
+		.mem_addr = (volatile uint32_t *)buf
 	};
 
 	stream_channel_t Stream_info_st =
@@ -355,7 +357,7 @@ bool I2C_master_recv(I2Cx_t I2Cx_en, uint8_t addr_u8, uint32_t length_u32)
 	{
 		.data_length = length_u32 - 2,
 		.peri_addr = &I2C_reg[I2Cx_en]->DR,
-		.mem_addr = (volatile uint8_t *)I2C_recv_buf[I2Cx_en]
+		.mem_addr = (volatile uint32_t *)I2C_recv_buf[I2Cx_en]
 	};
 
 	stream_channel_t Stream_info_st =

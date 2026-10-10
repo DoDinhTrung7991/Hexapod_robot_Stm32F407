@@ -253,7 +253,11 @@ void Reset_Handler(void)
 
 void EXTI0_Handler(void)
 {
-
+    if (READ_REG(EXTI_reg->PR, 1UL, 0U))
+	{
+        // Clear the pending bit by writing 1 to it
+        SET_BIT(EXTI_reg->PR, 0U);
+	}
 }
 
 void EXTI3_Handler(void)
@@ -286,23 +290,31 @@ void EXTI4_Handler(void)
 
 void EXTI15_10_Handler(void)
 {
-    if (INITTED == UART_init_state[USART1])
+    if ((INITTED == UART_init_state[USART1]) && (UART_STATE_READY == UART_state_rx[USART1]))
     {
+        UART_state_rx[USART1] = UART_STATE_BUSY;
+
         //Disable EXTI
         CLEAR_BIT(EXTI_reg->IMR, 10U);
-        SET_BIT(EXTI_reg->PR, 10U);
-
-        // UART_state_rx[USART1] = UART_STATE_BUSY;
+    }
+    
+    for (uint8_t i = 10; i <= 15; i ++)
+    {
+        if (READ_REG(EXTI_reg->PR, 1UL, i))
+	    {
+	    	// Clear the pending bit by writing 1 to it
+            SET_BIT(EXTI_reg->PR, i);
+	    }
     }
 }
 
 void USART1_Handler(void)
 {
     // Check IDLE flag
-    if (READ_REG(USART_reg[USART1]->SR, 1UL, 4U) /* && (UART_STATE_BUSY == UART_state_rx[USART1]) */)
+    if (READ_REG(USART_reg[USART1]->SR, 1UL, 4U))
     {
         UART_recv_buf[USART1].isEmpty = false;
-        UART_recv_buf[USART1].rear = (uint8_t)(sizeof(UART_recv_buf[USART1].buf) - DMA_reg[DMA2]->S[5].NDTR - 1);
+        UART_recv_buf[USART1].rear = (uint8_t)(sizeof(UART_recv_buf[USART1].buf) - DMA_reg[DMA2]->S[2].NDTR - 1);
 
         if (true == UART_recv_buf[USART1].isFull)
         {
@@ -324,10 +336,12 @@ void USART1_Handler(void)
         uint32_t temp = USART_reg[USART1]->SR;
         temp = USART_reg[USART1]->DR;
         (void)temp;
-        
+        UART_state_rx[USART1] = UART_STATE_READY;
+
+        // Clear the pending bit by writing 1 to it
+        SET_BIT(EXTI_reg->PR, 10);
         //Enable EXTI
-        // SET_BIT(EXTI_reg->IMR, 10U);
-        // UART_state_rx[USART1] = UART_STATE_READY;
+        SET_BIT(EXTI_reg->IMR, 10U);
     }
 
     // Check Overrun error, Noise ,Framing error and Parity error
@@ -337,6 +351,16 @@ void USART1_Handler(void)
         uint32_t temp = USART_reg[USART1]->SR;
         temp = USART_reg[USART1]->DR;
         (void)temp;
+
+        if (UART_STATE_BUSY == UART_state_rx[USART1])
+        {
+            UART_state_rx[USART1] = UART_STATE_READY;
+
+            // Clear the pending bit by writing 1 to it
+            SET_BIT(EXTI_reg->PR, 10);
+            //Enable EXTI
+            SET_BIT(EXTI_reg->IMR, 10U);
+        }
     }
 }
 
