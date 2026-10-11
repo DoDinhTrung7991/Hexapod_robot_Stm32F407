@@ -1,3 +1,4 @@
+#include "init_static.h"
 #include "RCC_header.h"
 #include "bit_operator.h"
 #include "UART.h"
@@ -283,7 +284,7 @@ bool UART_init(UARTx_t UARTx, uint32_t baudrate_u32)
 		// Disable USART
 		CLEAR_BIT(USART_reg[UARTx]->CR1, 13U);
 		// Setting Data layout
-		CLEAR_BIT(USART_reg[UARTx]->CR1, 12U);
+		CLEAR_BIT(USART_reg[UARTx]->CR1, 12U);	// 8 Data bits
 		// Setting Stop bits
 		WRITE_REG(USART_reg[UARTx]->CR2, 3UL, 12U, 0UL);
 		// Choose oversampling
@@ -372,6 +373,8 @@ bool UART_init(UARTx_t UARTx, uint32_t baudrate_u32)
 		SET_BIT(USART_reg[UARTx]->CR3, 6U);
 		// Enable Receiver
 		SET_BIT(USART_reg[UARTx]->CR1, 2U);
+		// Enable Transmitter
+		SET_BIT(USART_reg[UARTx]->CR1, 3U);
 		// Enable USART
 		SET_BIT(USART_reg[UARTx]->CR1, 13U);
 		UART_init_state[UARTx] = INITTED;
@@ -410,8 +413,6 @@ bool UART_transmit(UARTx_t UARTx, const uint8_t *buf, uint8_t data_length)
 		
 		// Enable DMA transmitter
 		SET_BIT(USART_reg[UARTx]->CR3, 7U);
-		// Enable Transmitter
-		SET_BIT(USART_reg[UARTx]->CR1, 3U);
 		UART_state_tx[UARTx] = UART_STATE_BUSY;
 	}
 

@@ -204,7 +204,7 @@ LOAD ../Build_Result/StartupCode/startup__stm32f407vet6.o
                 0x08000000                isr_vector_arr
                 0x08000188                        . = ALIGN (0x4)
 
-.text           0x08000188     0x19c4
+.text           0x08000188     0x19c0
                 0x08000188                        . = ALIGN (0x4)
  *(.text)
  *(.text*)
@@ -224,11 +224,11 @@ LOAD ../Build_Result/StartupCode/startup__stm32f407vet6.o
                 0x0800079c      0x114 ../Build_Result/Driver/Config/Interrupt/Interrupt.o
                 0x0800079c                Ex_Interrupt
  .text.UART_init
-                0x080008b0      0x2b0 ../Build_Result/Driver/Config/Communication/UART/UART.o
+                0x080008b0      0x2b8 ../Build_Result/Driver/Config/Communication/UART/UART.o
                 0x080008b0                UART_init
  .text.UART_transmit
-                0x08000b60       0x84 ../Build_Result/Driver/Config/Communication/UART/UART.o
-                0x08000b60                UART_transmit
+                0x08000b68       0x7c ../Build_Result/Driver/Config/Communication/UART/UART.o
+                0x08000b68                UART_transmit
  .text.UART_Read
                 0x08000be4      0x168 ../Build_Result/Driver/Config/Communication/UART/UART.o
                 0x08000be4                UART_Read
@@ -311,162 +311,162 @@ LOAD ../Build_Result/StartupCode/startup__stm32f407vet6.o
                 0x08001880       0x34 ../Build_Result/StartupCode/startup__stm32f407vet6.o
                 0x08001880                DMA2_Stream6_Handler
  .text.DMA2_Stream7_Handler
-                0x080018b4       0x5c ../Build_Result/StartupCode/startup__stm32f407vet6.o
+                0x080018b4       0x58 ../Build_Result/StartupCode/startup__stm32f407vet6.o
                 0x080018b4                DMA2_Stream7_Handler
  .text.TIM2_Handler
-                0x08001910        0x4 ../Build_Result/StartupCode/startup__stm32f407vet6.o
-                0x08001910                TIM2_Handler
+                0x0800190c        0x4 ../Build_Result/StartupCode/startup__stm32f407vet6.o
+                0x0800190c                TIM2_Handler
  .text.SysTick_Handler
-                0x08001914       0x10 ../Build_Result/StartupCode/startup__stm32f407vet6.o
-                0x08001914                SysTick_Handler
+                0x08001910       0x10 ../Build_Result/StartupCode/startup__stm32f407vet6.o
+                0x08001910                SysTick_Handler
  .text.Default_Handler
-                0x08001924        0x4 ../Build_Result/StartupCode/startup__stm32f407vet6.o
-                0x08001924                RTC_WKUP_Handler
-                0x08001924                FLASH_Handler
-                0x08001924                SVCall_Handler
-                0x08001924                OTG_HS_Handler
-                0x08001924                HardFault_Handler
-                0x08001924                USART3_Handler
-                0x08001924                PendSV_Handler
-                0x08001924                NMI_Handler
-                0x08001924                TIM6_DAC_Handler
-                0x08001924                CAN1_RX1_Handler
-                0x08001924                ADC_Handler
-                0x08001924                HASH_RNG_Handler
-                0x08001924                TAMP_STAMP_Handler
-                0x08001924                I2C3_ER_Handler
-                0x08001924                WWDG_Handler
-                0x08001924                I2C3_EV_Handler
-                0x08001924                OTG_FS_Handler
-                0x08001924                ETH_WKUP_Handler
-                0x08001924                TIM1_BRK_TIM9_Handler
-                0x08001924                UsageFault_Handler
-                0x08001924                TIM1_UP_TIM10_Handler
-                0x08001924                CAN1_RX0_Handler
-                0x08001924                TIM1_CC_Handler
-                0x08001924                I2C2_ER_Handler
-                0x08001924                USART6_Handler
-                0x08001924                TIM8_CC_Handler
-                0x08001924                CAN1_SCE_Handler
-                0x08001924                OTG_HS_EP1_OUT_Handler
-                0x08001924                FSMC_Handler
-                0x08001924                EXTI1_Handler
-                0x08001924                EXTI2_Handler
-                0x08001924                CRYP_Handler
-                0x08001924                UART4_Handler
-                0x08001924                CAN2_RX1_Handler
-                0x08001924                EXTI9_5_Handler
-                0x08001924                CAN2_SCE_Handler
-                0x08001924                TIM3_Handler
-                0x08001924                Default_Handler
-                0x08001924                DCMI_Handler
-                0x08001924                TIM1_TRG_COM_TIM11_Handler
-                0x08001924                RTC_Alarm_Handler
-                0x08001924                TIM4_Handler
-                0x08001924                CAN2_TX_Handler
-                0x08001924                SPI2_Handler
-                0x08001924                Debug_Handler
-                0x08001924                MemManage_Handler
-                0x08001924                TIM8_BRK_TIM12_Handler
-                0x08001924                CAN2_RX0_Handler
-                0x08001924                SDIO_Handler
-                0x08001924                USART2_Handler
-                0x08001924                ETH_Handler
-                0x08001924                SPI1_Handler
-                0x08001924                I2C2_EV_Handler
-                0x08001924                SPI3_Handler
-                0x08001924                RCC_Handler
-                0x08001924                PVD_Handler
-                0x08001924                UART5_Handler
-                0x08001924                TIM5_Handler
-                0x08001924                TIM7_Handler
-                0x08001924                TIM8_TRG_COM_TIM14_Handler
-                0x08001924                CAN1_TX_Handler
-                0x08001924                FPU_Handler
-                0x08001924                BusFault_Handler
-                0x08001924                OTG_HS_WKUP_Handler
-                0x08001924                OTG_FS_WKUP_Handler
-                0x08001924                OTG_HS_EP1_IN_Handler
+                0x08001920        0x4 ../Build_Result/StartupCode/startup__stm32f407vet6.o
+                0x08001920                RTC_WKUP_Handler
+                0x08001920                FLASH_Handler
+                0x08001920                SVCall_Handler
+                0x08001920                OTG_HS_Handler
+                0x08001920                HardFault_Handler
+                0x08001920                USART3_Handler
+                0x08001920                PendSV_Handler
+                0x08001920                NMI_Handler
+                0x08001920                TIM6_DAC_Handler
+                0x08001920                CAN1_RX1_Handler
+                0x08001920                ADC_Handler
+                0x08001920                HASH_RNG_Handler
+                0x08001920                TAMP_STAMP_Handler
+                0x08001920                I2C3_ER_Handler
+                0x08001920                WWDG_Handler
+                0x08001920                I2C3_EV_Handler
+                0x08001920                OTG_FS_Handler
+                0x08001920                ETH_WKUP_Handler
+                0x08001920                TIM1_BRK_TIM9_Handler
+                0x08001920                UsageFault_Handler
+                0x08001920                TIM1_UP_TIM10_Handler
+                0x08001920                CAN1_RX0_Handler
+                0x08001920                TIM1_CC_Handler
+                0x08001920                I2C2_ER_Handler
+                0x08001920                USART6_Handler
+                0x08001920                TIM8_CC_Handler
+                0x08001920                CAN1_SCE_Handler
+                0x08001920                OTG_HS_EP1_OUT_Handler
+                0x08001920                FSMC_Handler
+                0x08001920                EXTI1_Handler
+                0x08001920                EXTI2_Handler
+                0x08001920                CRYP_Handler
+                0x08001920                UART4_Handler
+                0x08001920                CAN2_RX1_Handler
+                0x08001920                EXTI9_5_Handler
+                0x08001920                CAN2_SCE_Handler
+                0x08001920                TIM3_Handler
+                0x08001920                Default_Handler
+                0x08001920                DCMI_Handler
+                0x08001920                TIM1_TRG_COM_TIM11_Handler
+                0x08001920                RTC_Alarm_Handler
+                0x08001920                TIM4_Handler
+                0x08001920                CAN2_TX_Handler
+                0x08001920                SPI2_Handler
+                0x08001920                Debug_Handler
+                0x08001920                MemManage_Handler
+                0x08001920                TIM8_BRK_TIM12_Handler
+                0x08001920                CAN2_RX0_Handler
+                0x08001920                SDIO_Handler
+                0x08001920                USART2_Handler
+                0x08001920                ETH_Handler
+                0x08001920                SPI1_Handler
+                0x08001920                I2C2_EV_Handler
+                0x08001920                SPI3_Handler
+                0x08001920                RCC_Handler
+                0x08001920                PVD_Handler
+                0x08001920                UART5_Handler
+                0x08001920                TIM5_Handler
+                0x08001920                TIM7_Handler
+                0x08001920                TIM8_TRG_COM_TIM14_Handler
+                0x08001920                CAN1_TX_Handler
+                0x08001920                FPU_Handler
+                0x08001920                BusFault_Handler
+                0x08001920                OTG_HS_WKUP_Handler
+                0x08001920                OTG_FS_WKUP_Handler
+                0x08001920                OTG_HS_EP1_IN_Handler
  .text.Reset_Handler
-                0x08001928       0xb8 ../Build_Result/StartupCode/startup__stm32f407vet6.o
-                0x08001928                Reset_Handler
+                0x08001924       0xb8 ../Build_Result/StartupCode/startup__stm32f407vet6.o
+                0x08001924                Reset_Handler
  .text.EXTI0_Handler
-                0x080019e0       0x18 ../Build_Result/StartupCode/startup__stm32f407vet6.o
-                0x080019e0                EXTI0_Handler
+                0x080019dc       0x18 ../Build_Result/StartupCode/startup__stm32f407vet6.o
+                0x080019dc                EXTI0_Handler
  .text.EXTI3_Handler
-                0x080019f8       0x2c ../Build_Result/StartupCode/startup__stm32f407vet6.o
-                0x080019f8                EXTI3_Handler
+                0x080019f4       0x2c ../Build_Result/StartupCode/startup__stm32f407vet6.o
+                0x080019f4                EXTI3_Handler
  .text.EXTI4_Handler
-                0x08001a24       0x2c ../Build_Result/StartupCode/startup__stm32f407vet6.o
-                0x08001a24                EXTI4_Handler
+                0x08001a20       0x2c ../Build_Result/StartupCode/startup__stm32f407vet6.o
+                0x08001a20                EXTI4_Handler
  .text.TIM8_UP_TIM13_Handler
-                0x08001a50        0x4 ../Build_Result/StartupCode/startup__stm32f407vet6.o
-                0x08001a50                TIM8_UP_TIM13_Handler
+                0x08001a4c        0x4 ../Build_Result/StartupCode/startup__stm32f407vet6.o
+                0x08001a4c                TIM8_UP_TIM13_Handler
  *(.init)
  *(.fini)
  *(.rodata)
  *(.rodata*)
  .rodata.main.str1.4
-                0x08001a54        0x4 ../Build_Result/Control/main.o
+                0x08001a50        0x4 ../Build_Result/Control/main.o
  .rodata.I2C_reg
-                0x08001a58        0xc ../Build_Result/Driver/Config/Communication/I2C/I2C.o
-                0x08001a58                I2C_reg
+                0x08001a54        0xc ../Build_Result/Driver/Config/Communication/I2C/I2C.o
+                0x08001a54                I2C_reg
  .rodata.UARTx_Interrupt_line
-                0x08001a64        0x6 ../Build_Result/Driver/Config/Communication/UART/UART.o
- *fill*         0x08001a6a        0x2 
+                0x08001a60        0x6 ../Build_Result/Driver/Config/Communication/UART/UART.o
+ *fill*         0x08001a66        0x2 
  .rodata.RCC_APBxENR_UART_arr
-                0x08001a6c       0x30 ../Build_Result/Driver/Config/Communication/UART/UART.o
+                0x08001a68       0x30 ../Build_Result/Driver/Config/Communication/UART/UART.o
  .rodata.GPIO_UART_rx_st
-                0x08001a9c       0x12 ../Build_Result/Driver/Config/Communication/UART/UART.o
- *fill*         0x08001aae        0x2 
+                0x08001a98       0x12 ../Build_Result/Driver/Config/Communication/UART/UART.o
+ *fill*         0x08001aaa        0x2 
  .rodata.GPIO_UART_tx_st
-                0x08001ab0       0x12 ../Build_Result/Driver/Config/Communication/UART/UART.o
- *fill*         0x08001ac2        0x2 
+                0x08001aac       0x12 ../Build_Result/Driver/Config/Communication/UART/UART.o
+ *fill*         0x08001abe        0x2 
  .rodata.UART_Stream_info_rx_st
-                0x08001ac4       0x12 ../Build_Result/Driver/Config/Communication/UART/UART.o
- *fill*         0x08001ad6        0x2 
+                0x08001ac0       0x12 ../Build_Result/Driver/Config/Communication/UART/UART.o
+ *fill*         0x08001ad2        0x2 
  .rodata.UART_Stream_info_tx_st
-                0x08001ad8       0x12 ../Build_Result/Driver/Config/Communication/UART/UART.o
- *fill*         0x08001aea        0x2 
+                0x08001ad4       0x12 ../Build_Result/Driver/Config/Communication/UART/UART.o
+ *fill*         0x08001ae6        0x2 
  .rodata.USART_reg
-                0x08001aec       0x18 ../Build_Result/Driver/Config/Communication/UART/UART.o
-                0x08001aec                USART_reg
+                0x08001ae8       0x18 ../Build_Result/Driver/Config/Communication/UART/UART.o
+                0x08001ae8                USART_reg
  .rodata.GPIO_reg
-                0x08001b04       0x24 ../Build_Result/Driver/Config/GPIO/GPIO.o
-                0x08001b04                GPIO_reg
+                0x08001b00       0x24 ../Build_Result/Driver/Config/GPIO/GPIO.o
+                0x08001b00                GPIO_reg
  .rodata.RCC_AHBxENR_DMA_pos_arr
-                0x08001b28        0x8 ../Build_Result/Driver/Config/DMA/DMA.o
+                0x08001b24        0x8 ../Build_Result/Driver/Config/DMA/DMA.o
  .rodata.DMAx_Interrupt_line
-                0x08001b30       0x10 ../Build_Result/Driver/Config/DMA/DMA.o
+                0x08001b2c       0x10 ../Build_Result/Driver/Config/DMA/DMA.o
  .rodata.clearFlag_shiftBit_arr
-                0x08001b40        0x4 ../Build_Result/Driver/Config/DMA/DMA.o
+                0x08001b3c        0x4 ../Build_Result/Driver/Config/DMA/DMA.o
  .rodata.DMA_reg
-                0x08001b44        0x8 ../Build_Result/Driver/Config/DMA/DMA.o
-                0x08001b44                DMA_reg
+                0x08001b40        0x8 ../Build_Result/Driver/Config/DMA/DMA.o
+                0x08001b40                DMA_reg
  *(.ARM.exidx .ARM.exidx.*)
-                0x08001b4c                        . = ALIGN (0x4)
-                0x08001b4c                        _etext = .
-                0x08001b4c                        _sidata = _etext
+                0x08001b48                        . = ALIGN (0x4)
+                0x08001b48                        _etext = .
+                0x08001b48                        _sidata = _etext
 
-.glue_7         0x08001b4c        0x0
- .glue_7        0x08001b4c        0x0 linker stubs
+.glue_7         0x08001b48        0x0
+ .glue_7        0x08001b48        0x0 linker stubs
 
-.glue_7t        0x08001b4c        0x0
- .glue_7t       0x08001b4c        0x0 linker stubs
+.glue_7t        0x08001b48        0x0
+ .glue_7t       0x08001b48        0x0 linker stubs
 
-.vfp11_veneer   0x08001b4c        0x0
- .vfp11_veneer  0x08001b4c        0x0 linker stubs
+.vfp11_veneer   0x08001b48        0x0
+ .vfp11_veneer  0x08001b48        0x0 linker stubs
 
-.v4_bx          0x08001b4c        0x0
- .v4_bx         0x08001b4c        0x0 linker stubs
+.v4_bx          0x08001b48        0x0
+ .v4_bx         0x08001b48        0x0 linker stubs
 
-.iplt           0x08001b4c        0x0
- .iplt          0x08001b4c        0x0 ../Build_Result/Control/main.o
+.iplt           0x08001b48        0x0
+ .iplt          0x08001b48        0x0 ../Build_Result/Control/main.o
 
-.rel.dyn        0x08001b4c        0x0
- .rel.iplt      0x08001b4c        0x0 ../Build_Result/Control/main.o
+.rel.dyn        0x08001b48        0x0
+ .rel.iplt      0x08001b48        0x0 ../Build_Result/Control/main.o
 
-.data           0x20000000        0x8 load address 0x08001b4c
+.data           0x20000000        0x8 load address 0x08001b48
                 0x20000000                        . = ALIGN (0x4)
                 0x20000000                        _sdata = .
  *(.data)
@@ -480,10 +480,10 @@ LOAD ../Build_Result/StartupCode/startup__stm32f407vet6.o
                 0x20000008                        . = ALIGN (0x4)
                 0x20000008                        _edata = .
 
-.igot.plt       0x20000008        0x0 load address 0x08001b54
+.igot.plt       0x20000008        0x0 load address 0x08001b50
  .igot.plt      0x20000008        0x0 ../Build_Result/Control/main.o
 
-.bss            0x20000008      0x27c load address 0x08001b54
+.bss            0x20000008      0x27c load address 0x08001b50
                 0x20000008                        . = ALIGN (0x4)
                 0x20000008                        _sbss = .
  *(COMMON)
@@ -517,10 +517,10 @@ LOAD ../Build_Result/StartupCode/startup__stm32f407vet6.o
                 0x20000284                        . = ALIGN (0x4)
  *fill*         0x20000282        0x2 
                 0x20000284                        _ebss = .
-                0x08001b54                        _sccm_lma = (_sidata + SIZEOF (.data))
-                0x08001b54                        _ccmram_sidata = _sccm_lma
+                0x08001b50                        _sccm_lma = (_sidata + SIZEOF (.data))
+                0x08001b50                        _ccmram_sidata = _sccm_lma
 
-.ccmram_data    0x10000000       0x30 load address 0x08001b54
+.ccmram_data    0x10000000       0x30 load address 0x08001b50
                 0x10000000                        _ccmram_sdata = .
  *(.ccmram_data*)
  .ccmram_data   0x10000000        0xf ../Build_Result/Driver/Config/Communication/I2C/I2C.o
@@ -538,7 +538,7 @@ LOAD ../Build_Result/StartupCode/startup__stm32f407vet6.o
  *fill*         0x1000002e        0x2 
                 0x10000030                        _ccmram_edata = .
 
-.ccmram_bss     0x10000030        0x4 load address 0x08001b84
+.ccmram_bss     0x10000030        0x4 load address 0x08001b80
                 0x10000030                        _ccmram_sbss = .
  *(.ccmram_bss*)
  .ccmram_bss    0x10000030        0x4 ../Build_Result/StartupCode/startup__stm32f407vet6.o
@@ -546,7 +546,7 @@ LOAD ../Build_Result/StartupCode/startup__stm32f407vet6.o
                 0x10000034                        . = ALIGN (0x4)
                 0x10000034                        _ccmram_ebss = .
 
-.heap           0x20000284      0x204 load address 0x08001dd0
+.heap           0x20000284      0x204 load address 0x08001dcc
                 0x20000288                        . = ALIGN (0x8)
  *fill*         0x20000284        0x4 
                 0x20000288                        _heap_start = .
@@ -555,7 +555,7 @@ LOAD ../Build_Result/StartupCode/startup__stm32f407vet6.o
                 0x20000488                        . = ALIGN (0x8)
                 0x20000488                        _heap_end = .
 
-.stack          0x20000488    0x1fb78 load address 0x08001fd4
+.stack          0x20000488    0x1fb78 load address 0x08001fd0
                 0x20020000                        _estack = (ORIGIN (SRAM) + LENGTH (SRAM))
                 0x2001fc00                        _stack_start = (_estack - _Min_stack_size)
                 0x2001fc00                        . = _stack_start

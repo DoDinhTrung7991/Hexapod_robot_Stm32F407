@@ -866,11 +866,9 @@ void DMA2_Stream7_Handler(void)
 
         if (UART_STATE_BUSY == UART_state_tx[USART1])
         {
-            UART_state_tx[USART1] = UART_STATE_READY;
             // Disable DMA transmitter
 		    CLEAR_BIT(USART_reg[USART1]->CR3, 7U);
-		    // Disable Transmitter
-		    CLEAR_BIT(USART_reg[USART1]->CR1, 3U);
+            UART_state_tx[USART1] = UART_STATE_READY;
         }
     }
 

@@ -1,13 +1,12 @@
 #ifndef _UART_H_
 #define _UART_H_
 
-#include "init_static.h"
 #include "USART_header.h"
 #include "DMA.h"
 #include "queue.h"
 
-#define UART_STATE_READY 1
 #define UART_STATE_BUSY 0
+#define UART_STATE_READY 1
 
 typedef enum
 {
