@@ -243,6 +243,9 @@ bool UART_init(UARTx_t UARTx, uint32_t baudrate_u32)
 				}
 			};
 		
+			// init queue
+			queue_init((queue_t*)&UART_recv_buf[UARTx]);
+
 			buffer_t buffer_info_rx_st = (buffer_t)
 			{
 				.data_length = sizeof(UART_recv_buf[UARTx].buf),
@@ -365,8 +368,6 @@ bool UART_init(UARTx_t UARTx, uint32_t baudrate_u32)
 		// RXNE interrupt disable
 		CLEAR_BIT(USART_reg[UARTx]->CR1, 5U);
 
-		// init queue
-		queue_init((queue_t*)&UART_recv_buf[UARTx]);
 		// Enable DMA receiver
 		SET_BIT(USART_reg[UARTx]->CR3, 6U);
 		// Enable Receiver
