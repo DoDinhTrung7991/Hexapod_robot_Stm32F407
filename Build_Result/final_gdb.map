@@ -258,7 +258,7 @@ LOAD ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
                 0x08000000                isr_vector_arr
                 0x08000188                        . = ALIGN (0x4)
 
-.text           0x08000188     0x31dc
+.text           0x08000188     0x30e4
                 0x08000188                        . = ALIGN (0x4)
  *(.text)
  *(.text*)
@@ -289,254 +289,254 @@ LOAD ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
                 0x08000b6c      0x1d4 ../Build_Result/Driver/Config/Interrupt/Interrupt_gdb.o
                 0x08000b6c                Ex_Interrupt
  .text.UART_init
-                0x08000d40      0x5dc ../Build_Result/Driver/Config/Communication/UART/UART_gdb.o
+                0x08000d40      0x5e8 ../Build_Result/Driver/Config/Communication/UART/UART_gdb.o
                 0x08000d40                UART_init
  .text.UART_transmit
-                0x0800131c       0xc4 ../Build_Result/Driver/Config/Communication/UART/UART_gdb.o
-                0x0800131c                UART_transmit
+                0x08001328       0xc4 ../Build_Result/Driver/Config/Communication/UART/UART_gdb.o
+                0x08001328                UART_transmit
  .text.UART_Read
-                0x080013e0      0x390 ../Build_Result/Driver/Config/Communication/UART/UART_gdb.o
-                0x080013e0                UART_Read
+                0x080013ec      0x28c ../Build_Result/Driver/Config/Communication/UART/UART_gdb.o
+                0x080013ec                UART_Read
  .text.GPIO_setup
-                0x08001770      0x2b0 ../Build_Result/Driver/Config/GPIO/GPIO_gdb.o
-                0x08001770                GPIO_setup
+                0x08001678      0x2b0 ../Build_Result/Driver/Config/GPIO/GPIO_gdb.o
+                0x08001678                GPIO_setup
  .text.GPIO_IN_getVal
-                0x08001a20       0x58 ../Build_Result/Driver/Config/GPIO/GPIO_gdb.o
-                0x08001a20                GPIO_IN_getVal
+                0x08001928       0x58 ../Build_Result/Driver/Config/GPIO/GPIO_gdb.o
+                0x08001928                GPIO_IN_getVal
  .text.GPIO_OUT_setVal
-                0x08001a78       0x80 ../Build_Result/Driver/Config/GPIO/GPIO_gdb.o
-                0x08001a78                GPIO_OUT_setVal
+                0x08001980       0x80 ../Build_Result/Driver/Config/GPIO/GPIO_gdb.o
+                0x08001980                GPIO_OUT_setVal
  .text.GPIO_init
-                0x08001af8       0x2c ../Build_Result/Driver/Config/GPIO/GPIO_gdb.o
+                0x08001a00       0x2c ../Build_Result/Driver/Config/GPIO/GPIO_gdb.o
  .text.SystemInit
-                0x08001b24       0x60 ../Build_Result/Driver/Config/Driver_Init/init_gdb.o
-                0x08001b24                SystemInit
+                0x08001a2c       0x60 ../Build_Result/Driver/Config/Driver_Init/init_gdb.o
+                0x08001a2c                SystemInit
  .text.DMA_direct_init
-                0x08001b84      0x52c ../Build_Result/Driver/Config/DMA/DMA_gdb.o
-                0x08001b84                DMA_direct_init
+                0x08001a8c      0x52c ../Build_Result/Driver/Config/DMA/DMA_gdb.o
+                0x08001a8c                DMA_direct_init
  .text.DMA_transfer
-                0x080020b0      0x15c ../Build_Result/Driver/Config/DMA/DMA_gdb.o
-                0x080020b0                DMA_transfer
+                0x08001fb8      0x15c ../Build_Result/Driver/Config/DMA/DMA_gdb.o
+                0x08001fb8                DMA_transfer
  .text.Enable_DMA_interruptLine
-                0x0800220c       0x60 ../Build_Result/Driver/Config/DMA/DMA_gdb.o
+                0x08002114       0x60 ../Build_Result/Driver/Config/DMA/DMA_gdb.o
  .text.queue_init
-                0x0800226c       0x54 ../Build_Result/Algorithm/queue/queue_gdb.o
-                0x0800226c                queue_init
+                0x08002174       0x54 ../Build_Result/Algorithm/queue/queue_gdb.o
+                0x08002174                queue_init
  .text.Reset_Handler
-                0x080022c0       0x6c ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x080022c0                Reset_Handler
+                0x080021c8       0x6c ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x080021c8                Reset_Handler
  .text.EXTI0_Handler
-                0x0800232c       0x2c ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x0800232c                EXTI0_Handler
+                0x08002234       0x2c ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x08002234                EXTI0_Handler
  .text.EXTI3_Handler
-                0x08002358       0x40 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x08002358                EXTI3_Handler
+                0x08002260       0x40 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x08002260                EXTI3_Handler
  .text.EXTI4_Handler
-                0x08002398       0x40 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x08002398                EXTI4_Handler
+                0x080022a0       0x40 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x080022a0                EXTI4_Handler
  .text.EXTI15_10_Handler
-                0x080023d8       0x7c ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x080023d8                EXTI15_10_Handler
+                0x080022e0       0x7c ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x080022e0                EXTI15_10_Handler
  .text.USART1_Handler
-                0x08002454      0x16c ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x08002454                USART1_Handler
+                0x0800235c      0x16c ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x0800235c                USART1_Handler
  .text.I2C1_EV_Handler
-                0x080025c0      0x1d4 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x080025c0                I2C1_EV_Handler
+                0x080024c8      0x1d4 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x080024c8                I2C1_EV_Handler
  .text.I2C1_ER_Handler
-                0x08002794      0x128 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x08002794                I2C1_ER_Handler
+                0x0800269c      0x128 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x0800269c                I2C1_ER_Handler
  .text.DMA1_Stream0_Handler
-                0x080028bc       0xac ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x080028bc                DMA1_Stream0_Handler
+                0x080027c4       0xac ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x080027c4                DMA1_Stream0_Handler
  .text.DMA1_Stream1_Handler
-                0x08002968       0x74 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x08002968                DMA1_Stream1_Handler
+                0x08002870       0x74 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x08002870                DMA1_Stream1_Handler
  .text.DMA1_Stream2_Handler
-                0x080029dc       0xdc ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x080029dc                DMA1_Stream2_Handler
+                0x080028e4       0xdc ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x080028e4                DMA1_Stream2_Handler
  .text.DMA1_Stream3_Handler
-                0x08002ab8       0xac ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x08002ab8                DMA1_Stream3_Handler
+                0x080029c0       0xac ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x080029c0                DMA1_Stream3_Handler
  .text.DMA1_Stream4_Handler
-                0x08002b64       0x9c ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x08002b64                DMA1_Stream4_Handler
+                0x08002a6c       0x9c ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x08002a6c                DMA1_Stream4_Handler
  .text.DMA1_Stream5_Handler
-                0x08002c00       0xac ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x08002c00                DMA1_Stream5_Handler
+                0x08002b08       0xac ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x08002b08                DMA1_Stream5_Handler
  .text.DMA1_Stream6_Handler
-                0x08002cac       0x9c ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x08002cac                DMA1_Stream6_Handler
+                0x08002bb4       0x9c ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x08002bb4                DMA1_Stream6_Handler
  .text.DMA1_Stream7_Handler
-                0x08002d48       0xbc ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x08002d48                DMA1_Stream7_Handler
+                0x08002c50       0xbc ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x08002c50                DMA1_Stream7_Handler
  .text.DMA2_Stream0_Handler
-                0x08002e04       0x74 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x08002e04                DMA2_Stream0_Handler
+                0x08002d0c       0x74 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x08002d0c                DMA2_Stream0_Handler
  .text.DMA2_Stream1_Handler
-                0x08002e78       0x74 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x08002e78                DMA2_Stream1_Handler
+                0x08002d80       0x74 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x08002d80                DMA2_Stream1_Handler
  .text.DMA2_Stream2_Handler
-                0x08002eec       0xa0 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x08002eec                DMA2_Stream2_Handler
+                0x08002df4       0xa0 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x08002df4                DMA2_Stream2_Handler
  .text.DMA2_Stream3_Handler
-                0x08002f8c       0x74 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x08002f8c                DMA2_Stream3_Handler
+                0x08002e94       0x74 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x08002e94                DMA2_Stream3_Handler
  .text.DMA2_Stream4_Handler
-                0x08003000       0x74 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x08003000                DMA2_Stream4_Handler
+                0x08002f08       0x74 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x08002f08                DMA2_Stream4_Handler
  .text.DMA2_Stream5_Handler
-                0x08003074       0x74 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x08003074                DMA2_Stream5_Handler
+                0x08002f7c       0x74 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x08002f7c                DMA2_Stream5_Handler
  .text.DMA2_Stream6_Handler
-                0x080030e8       0x74 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x080030e8                DMA2_Stream6_Handler
+                0x08002ff0       0x74 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x08002ff0                DMA2_Stream6_Handler
  .text.DMA2_Stream7_Handler
-                0x0800315c       0xa0 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x0800315c                DMA2_Stream7_Handler
+                0x08003064       0xa0 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x08003064                DMA2_Stream7_Handler
  .text.TIM2_Handler
-                0x080031fc        0xe ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x080031fc                TIM2_Handler
+                0x08003104        0xe ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x08003104                TIM2_Handler
  .text.TIM8_UP_TIM13_Handler
-                0x0800320a        0xe ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x0800320a                TIM8_UP_TIM13_Handler
+                0x08003112        0xe ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x08003112                TIM8_UP_TIM13_Handler
  .text.SysTick_Handler
-                0x08003218       0x1c ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x08003218                SysTick_Handler
+                0x08003120       0x1c ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x08003120                SysTick_Handler
  .text.Default_Handler
-                0x08003234        0x8 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
-                0x08003234                RTC_WKUP_Handler
-                0x08003234                FLASH_Handler
-                0x08003234                SVCall_Handler
-                0x08003234                OTG_HS_Handler
-                0x08003234                HardFault_Handler
-                0x08003234                USART3_Handler
-                0x08003234                PendSV_Handler
-                0x08003234                NMI_Handler
-                0x08003234                TIM6_DAC_Handler
-                0x08003234                CAN1_RX1_Handler
-                0x08003234                ADC_Handler
-                0x08003234                HASH_RNG_Handler
-                0x08003234                TAMP_STAMP_Handler
-                0x08003234                I2C3_ER_Handler
-                0x08003234                WWDG_Handler
-                0x08003234                I2C3_EV_Handler
-                0x08003234                OTG_FS_Handler
-                0x08003234                ETH_WKUP_Handler
-                0x08003234                TIM1_BRK_TIM9_Handler
-                0x08003234                UsageFault_Handler
-                0x08003234                TIM1_UP_TIM10_Handler
-                0x08003234                CAN1_RX0_Handler
-                0x08003234                TIM1_CC_Handler
-                0x08003234                I2C2_ER_Handler
-                0x08003234                USART6_Handler
-                0x08003234                TIM8_CC_Handler
-                0x08003234                CAN1_SCE_Handler
-                0x08003234                OTG_HS_EP1_OUT_Handler
-                0x08003234                FSMC_Handler
-                0x08003234                EXTI1_Handler
-                0x08003234                CRYP_Handler
-                0x08003234                EXTI2_Handler
-                0x08003234                UART4_Handler
-                0x08003234                CAN2_RX1_Handler
-                0x08003234                EXTI9_5_Handler
-                0x08003234                CAN2_SCE_Handler
-                0x08003234                TIM3_Handler
-                0x08003234                Default_Handler
-                0x08003234                DCMI_Handler
-                0x08003234                TIM1_TRG_COM_TIM11_Handler
-                0x08003234                RTC_Alarm_Handler
-                0x08003234                TIM4_Handler
-                0x08003234                CAN2_TX_Handler
-                0x08003234                SPI2_Handler
-                0x08003234                Debug_Handler
-                0x08003234                MemManage_Handler
-                0x08003234                TIM8_BRK_TIM12_Handler
-                0x08003234                CAN2_RX0_Handler
-                0x08003234                SDIO_Handler
-                0x08003234                USART2_Handler
-                0x08003234                ETH_Handler
-                0x08003234                SPI1_Handler
-                0x08003234                I2C2_EV_Handler
-                0x08003234                SPI3_Handler
-                0x08003234                RCC_Handler
-                0x08003234                PVD_Handler
-                0x08003234                UART5_Handler
-                0x08003234                TIM5_Handler
-                0x08003234                TIM7_Handler
-                0x08003234                TIM8_TRG_COM_TIM14_Handler
-                0x08003234                CAN1_TX_Handler
-                0x08003234                FPU_Handler
-                0x08003234                BusFault_Handler
-                0x08003234                OTG_HS_WKUP_Handler
-                0x08003234                OTG_FS_WKUP_Handler
-                0x08003234                OTG_HS_EP1_IN_Handler
+                0x0800313c        0x8 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x0800313c                RTC_WKUP_Handler
+                0x0800313c                FLASH_Handler
+                0x0800313c                SVCall_Handler
+                0x0800313c                OTG_HS_Handler
+                0x0800313c                HardFault_Handler
+                0x0800313c                USART3_Handler
+                0x0800313c                PendSV_Handler
+                0x0800313c                NMI_Handler
+                0x0800313c                TIM6_DAC_Handler
+                0x0800313c                CAN1_RX1_Handler
+                0x0800313c                ADC_Handler
+                0x0800313c                HASH_RNG_Handler
+                0x0800313c                TAMP_STAMP_Handler
+                0x0800313c                I2C3_ER_Handler
+                0x0800313c                WWDG_Handler
+                0x0800313c                I2C3_EV_Handler
+                0x0800313c                OTG_FS_Handler
+                0x0800313c                ETH_WKUP_Handler
+                0x0800313c                TIM1_BRK_TIM9_Handler
+                0x0800313c                UsageFault_Handler
+                0x0800313c                TIM1_UP_TIM10_Handler
+                0x0800313c                CAN1_RX0_Handler
+                0x0800313c                TIM1_CC_Handler
+                0x0800313c                I2C2_ER_Handler
+                0x0800313c                USART6_Handler
+                0x0800313c                TIM8_CC_Handler
+                0x0800313c                CAN1_SCE_Handler
+                0x0800313c                OTG_HS_EP1_OUT_Handler
+                0x0800313c                FSMC_Handler
+                0x0800313c                EXTI1_Handler
+                0x0800313c                CRYP_Handler
+                0x0800313c                EXTI2_Handler
+                0x0800313c                UART4_Handler
+                0x0800313c                CAN2_RX1_Handler
+                0x0800313c                EXTI9_5_Handler
+                0x0800313c                CAN2_SCE_Handler
+                0x0800313c                TIM3_Handler
+                0x0800313c                Default_Handler
+                0x0800313c                DCMI_Handler
+                0x0800313c                TIM1_TRG_COM_TIM11_Handler
+                0x0800313c                RTC_Alarm_Handler
+                0x0800313c                TIM4_Handler
+                0x0800313c                CAN2_TX_Handler
+                0x0800313c                SPI2_Handler
+                0x0800313c                Debug_Handler
+                0x0800313c                MemManage_Handler
+                0x0800313c                TIM8_BRK_TIM12_Handler
+                0x0800313c                CAN2_RX0_Handler
+                0x0800313c                SDIO_Handler
+                0x0800313c                USART2_Handler
+                0x0800313c                ETH_Handler
+                0x0800313c                SPI1_Handler
+                0x0800313c                I2C2_EV_Handler
+                0x0800313c                SPI3_Handler
+                0x0800313c                RCC_Handler
+                0x0800313c                PVD_Handler
+                0x0800313c                UART5_Handler
+                0x0800313c                TIM5_Handler
+                0x0800313c                TIM7_Handler
+                0x0800313c                TIM8_TRG_COM_TIM14_Handler
+                0x0800313c                CAN1_TX_Handler
+                0x0800313c                FPU_Handler
+                0x0800313c                BusFault_Handler
+                0x0800313c                OTG_HS_WKUP_Handler
+                0x0800313c                OTG_FS_WKUP_Handler
+                0x0800313c                OTG_HS_EP1_IN_Handler
  .text.LMAtoVMA
-                0x0800323c       0x34 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x08003144       0x34 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
  .text.clear_bss
-                0x08003270       0x2c ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+                0x08003178       0x2c ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
  *(.init)
  *(.fini)
  *(.rodata)
- .rodata        0x0800329c        0x3 ../Build_Result/Control/main_gdb.o
- *fill*         0x0800329f        0x1 
- .rodata        0x080032a0        0x8 ../Build_Result/Driver/Config/Driver_Init/init_gdb.o
+ .rodata        0x080031a4        0x3 ../Build_Result/Control/main_gdb.o
+ *fill*         0x080031a7        0x1 
+ .rodata        0x080031a8        0x8 ../Build_Result/Driver/Config/Driver_Init/init_gdb.o
  *(.rodata*)
  .rodata.I2C_reg
-                0x080032a8        0xc ../Build_Result/Driver/Config/Communication/I2C/I2C_gdb.o
-                0x080032a8                I2C_reg
+                0x080031b0        0xc ../Build_Result/Driver/Config/Communication/I2C/I2C_gdb.o
+                0x080031b0                I2C_reg
  .rodata.USART_reg
-                0x080032b4       0x18 ../Build_Result/Driver/Config/Communication/UART/UART_gdb.o
-                0x080032b4                USART_reg
+                0x080031bc       0x18 ../Build_Result/Driver/Config/Communication/UART/UART_gdb.o
+                0x080031bc                USART_reg
  .rodata.UART_Stream_info_tx_st
-                0x080032cc       0x12 ../Build_Result/Driver/Config/Communication/UART/UART_gdb.o
- *fill*         0x080032de        0x2 
+                0x080031d4       0x12 ../Build_Result/Driver/Config/Communication/UART/UART_gdb.o
+ *fill*         0x080031e6        0x2 
  .rodata.UART_Stream_info_rx_st
-                0x080032e0       0x12 ../Build_Result/Driver/Config/Communication/UART/UART_gdb.o
- *fill*         0x080032f2        0x2 
+                0x080031e8       0x12 ../Build_Result/Driver/Config/Communication/UART/UART_gdb.o
+ *fill*         0x080031fa        0x2 
  .rodata.GPIO_UART_tx_st
-                0x080032f4       0x12 ../Build_Result/Driver/Config/Communication/UART/UART_gdb.o
- *fill*         0x08003306        0x2 
+                0x080031fc       0x12 ../Build_Result/Driver/Config/Communication/UART/UART_gdb.o
+ *fill*         0x0800320e        0x2 
  .rodata.GPIO_UART_rx_st
-                0x08003308       0x12 ../Build_Result/Driver/Config/Communication/UART/UART_gdb.o
- *fill*         0x0800331a        0x2 
+                0x08003210       0x12 ../Build_Result/Driver/Config/Communication/UART/UART_gdb.o
+ *fill*         0x08003222        0x2 
  .rodata.UARTx_Interrupt_line
-                0x0800331c        0x6 ../Build_Result/Driver/Config/Communication/UART/UART_gdb.o
- *fill*         0x08003322        0x2 
+                0x08003224        0x6 ../Build_Result/Driver/Config/Communication/UART/UART_gdb.o
+ *fill*         0x0800322a        0x2 
  .rodata.GPIO_reg
-                0x08003324       0x24 ../Build_Result/Driver/Config/GPIO/GPIO_gdb.o
-                0x08003324                GPIO_reg
+                0x0800322c       0x24 ../Build_Result/Driver/Config/GPIO/GPIO_gdb.o
+                0x0800322c                GPIO_reg
  .rodata.DMA_reg
-                0x08003348        0x8 ../Build_Result/Driver/Config/DMA/DMA_gdb.o
-                0x08003348                DMA_reg
+                0x08003250        0x8 ../Build_Result/Driver/Config/DMA/DMA_gdb.o
+                0x08003250                DMA_reg
  .rodata.clearFlag_shiftBit_arr
-                0x08003350        0x4 ../Build_Result/Driver/Config/DMA/DMA_gdb.o
+                0x08003258        0x4 ../Build_Result/Driver/Config/DMA/DMA_gdb.o
  .rodata.DMAx_Interrupt_line
-                0x08003354       0x10 ../Build_Result/Driver/Config/DMA/DMA_gdb.o
+                0x0800325c       0x10 ../Build_Result/Driver/Config/DMA/DMA_gdb.o
  *(.ARM.exidx .ARM.exidx.*)
-                0x08003364                        . = ALIGN (0x4)
-                0x08003364                        _etext = .
-                0x08003364                        _sidata = _etext
+                0x0800326c                        . = ALIGN (0x4)
+                0x0800326c                        _etext = .
+                0x0800326c                        _sidata = _etext
 
-.glue_7         0x08003364        0x0
- .glue_7        0x08003364        0x0 linker stubs
+.glue_7         0x0800326c        0x0
+ .glue_7        0x0800326c        0x0 linker stubs
 
-.glue_7t        0x08003364        0x0
- .glue_7t       0x08003364        0x0 linker stubs
+.glue_7t        0x0800326c        0x0
+ .glue_7t       0x0800326c        0x0 linker stubs
 
-.vfp11_veneer   0x08003364        0x0
- .vfp11_veneer  0x08003364        0x0 linker stubs
+.vfp11_veneer   0x0800326c        0x0
+ .vfp11_veneer  0x0800326c        0x0 linker stubs
 
-.v4_bx          0x08003364        0x0
- .v4_bx         0x08003364        0x0 linker stubs
+.v4_bx          0x0800326c        0x0
+ .v4_bx         0x0800326c        0x0 linker stubs
 
-.iplt           0x08003364        0x0
- .iplt          0x08003364        0x0 ../Build_Result/Control/main_gdb.o
+.iplt           0x0800326c        0x0
+ .iplt          0x0800326c        0x0 ../Build_Result/Control/main_gdb.o
 
-.rel.dyn        0x08003364        0x0
- .rel.iplt      0x08003364        0x0 ../Build_Result/Control/main_gdb.o
+.rel.dyn        0x0800326c        0x0
+ .rel.iplt      0x0800326c        0x0 ../Build_Result/Control/main_gdb.o
 
-.data           0x20000000       0x40 load address 0x08003364
+.data           0x20000000       0x40 load address 0x0800326c
                 0x20000000                        . = ALIGN (0x4)
                 0x20000000                        _sdata = .
  *(.data)
@@ -554,10 +554,10 @@ LOAD ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
                 0x20000040                        . = ALIGN (0x4)
                 0x20000040                        _edata = .
 
-.igot.plt       0x20000040        0x0 load address 0x080033a4
+.igot.plt       0x20000040        0x0 load address 0x080032ac
  .igot.plt      0x20000040        0x0 ../Build_Result/Control/main_gdb.o
 
-.bss            0x20000040      0x27c load address 0x080033a4
+.bss            0x20000040      0x27c load address 0x080032ac
                 0x20000040                        . = ALIGN (0x4)
                 0x20000040                        _sbss = .
  *(COMMON)
@@ -591,10 +591,10 @@ LOAD ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
                 0x200002bc                        . = ALIGN (0x4)
  *fill*         0x200002ba        0x2 
                 0x200002bc                        _ebss = .
-                0x080033a4                        _sccm_lma = (_sidata + SIZEOF (.data))
-                0x080033a4                        _ccmram_sidata = _sccm_lma
+                0x080032ac                        _sccm_lma = (_sidata + SIZEOF (.data))
+                0x080032ac                        _ccmram_sidata = _sccm_lma
 
-.ccmram_data    0x10000000       0x30 load address 0x080033a4
+.ccmram_data    0x10000000       0x30 load address 0x080032ac
                 0x10000000                        _ccmram_sdata = .
  *(.ccmram_data*)
  .ccmram_data   0x10000000        0xf ../Build_Result/Driver/Config/Communication/I2C/I2C_gdb.o
@@ -612,7 +612,7 @@ LOAD ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
  *fill*         0x1000002e        0x2 
                 0x10000030                        _ccmram_edata = .
 
-.ccmram_bss     0x10000030        0x4 load address 0x080033d4
+.ccmram_bss     0x10000030        0x4 load address 0x080032dc
                 0x10000030                        _ccmram_sbss = .
  *(.ccmram_bss*)
  .ccmram_bss    0x10000030        0x4 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
@@ -620,7 +620,7 @@ LOAD ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
                 0x10000034                        . = ALIGN (0x4)
                 0x10000034                        _ccmram_ebss = .
 
-.heap           0x200002bc      0x204 load address 0x08003620
+.heap           0x200002bc      0x204 load address 0x08003528
                 0x200002c0                        . = ALIGN (0x8)
  *fill*         0x200002bc        0x4 
                 0x200002c0                        _heap_start = .
@@ -629,7 +629,7 @@ LOAD ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
                 0x200004c0                        . = ALIGN (0x8)
                 0x200004c0                        _heap_end = .
 
-.stack          0x200004c0    0x1fb40 load address 0x08003824
+.stack          0x200004c0    0x1fb40 load address 0x0800372c
                 0x20020000                        _estack = (ORIGIN (SRAM) + LENGTH (SRAM))
                 0x2001fc00                        _stack_start = (_estack - _Min_stack_size)
                 0x2001fc00                        . = _stack_start
@@ -643,17 +643,17 @@ LOAD ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
 OUTPUT(../Build_Result/Hexapod_Robot_gdb.elf elf32-littlearm)
 LOAD linker stubs
 
-.debug_info     0x00000000     0x516e
+.debug_info     0x00000000     0x5087
  .debug_info    0x00000000      0x349 ../Build_Result/Control/main_gdb.o
  .debug_info    0x00000349      0x8f1 ../Build_Result/Driver/Static/Driver_Init/init_static_gdb.o
  .debug_info    0x00000c3a      0x784 ../Build_Result/Driver/Config/Interrupt/Interrupt_gdb.o
  .debug_info    0x000013be      0xe6b ../Build_Result/Driver/Config/Communication/I2C/I2C_gdb.o
- .debug_info    0x00002229      0xf67 ../Build_Result/Driver/Config/Communication/UART/UART_gdb.o
- .debug_info    0x00003190      0x5a1 ../Build_Result/Driver/Config/GPIO/GPIO_gdb.o
- .debug_info    0x00003731      0x2ec ../Build_Result/Driver/Config/Driver_Init/init_gdb.o
- .debug_info    0x00003a1d      0xb31 ../Build_Result/Driver/Config/DMA/DMA_gdb.o
- .debug_info    0x0000454e      0x231 ../Build_Result/Algorithm/queue/queue_gdb.o
- .debug_info    0x0000477f      0x9ef ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+ .debug_info    0x00002229      0xe80 ../Build_Result/Driver/Config/Communication/UART/UART_gdb.o
+ .debug_info    0x000030a9      0x5a1 ../Build_Result/Driver/Config/GPIO/GPIO_gdb.o
+ .debug_info    0x0000364a      0x2ec ../Build_Result/Driver/Config/Driver_Init/init_gdb.o
+ .debug_info    0x00003936      0xb31 ../Build_Result/Driver/Config/DMA/DMA_gdb.o
+ .debug_info    0x00004467      0x231 ../Build_Result/Algorithm/queue/queue_gdb.o
+ .debug_info    0x00004698      0x9ef ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
 
 .debug_abbrev   0x00000000      0xf37
  .debug_abbrev  0x00000000       0xf2 ../Build_Result/Control/main_gdb.o
@@ -712,17 +712,17 @@ LOAD linker stubs
  .debug_rnglists
                 0x00000158       0xcd ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
 
-.debug_line     0x00000000     0x2320
+.debug_line     0x00000000     0x2300
  .debug_line    0x00000000      0x10d ../Build_Result/Control/main_gdb.o
  .debug_line    0x0000010d      0x561 ../Build_Result/Driver/Static/Driver_Init/init_static_gdb.o
  .debug_line    0x0000066e      0x1d2 ../Build_Result/Driver/Config/Interrupt/Interrupt_gdb.o
  .debug_line    0x00000840      0x539 ../Build_Result/Driver/Config/Communication/I2C/I2C_gdb.o
- .debug_line    0x00000d79      0x4ab ../Build_Result/Driver/Config/Communication/UART/UART_gdb.o
- .debug_line    0x00001224      0x1b6 ../Build_Result/Driver/Config/GPIO/GPIO_gdb.o
- .debug_line    0x000013da       0xd9 ../Build_Result/Driver/Config/Driver_Init/init_gdb.o
- .debug_line    0x000014b3      0x32d ../Build_Result/Driver/Config/DMA/DMA_gdb.o
- .debug_line    0x000017e0      0x209 ../Build_Result/Algorithm/queue/queue_gdb.o
- .debug_line    0x000019e9      0x937 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
+ .debug_line    0x00000d79      0x48b ../Build_Result/Driver/Config/Communication/UART/UART_gdb.o
+ .debug_line    0x00001204      0x1b6 ../Build_Result/Driver/Config/GPIO/GPIO_gdb.o
+ .debug_line    0x000013ba       0xd9 ../Build_Result/Driver/Config/Driver_Init/init_gdb.o
+ .debug_line    0x00001493      0x32d ../Build_Result/Driver/Config/DMA/DMA_gdb.o
+ .debug_line    0x000017c0      0x209 ../Build_Result/Algorithm/queue/queue_gdb.o
+ .debug_line    0x000019c9      0x937 ../Build_Result/StartupCode/startup__stm32f407vet6_gdb.o
 
 .debug_str      0x00000000     0x1aae
  .debug_str     0x00000000     0x1aae ../Build_Result/Control/main_gdb.o
@@ -730,7 +730,7 @@ LOAD linker stubs
  .debug_str     0x00001aae      0x74f ../Build_Result/Driver/Static/Driver_Init/init_static_gdb.o
  .debug_str     0x00001aae      0x7fb ../Build_Result/Driver/Config/Interrupt/Interrupt_gdb.o
  .debug_str     0x00001aae      0xbfb ../Build_Result/Driver/Config/Communication/I2C/I2C_gdb.o
- .debug_str     0x00001aae      0xcd2 ../Build_Result/Driver/Config/Communication/UART/UART_gdb.o
+ .debug_str     0x00001aae      0xc9b ../Build_Result/Driver/Config/Communication/UART/UART_gdb.o
  .debug_str     0x00001aae      0x498 ../Build_Result/Driver/Config/GPIO/GPIO_gdb.o
  .debug_str     0x00001aae      0x42e ../Build_Result/Driver/Config/Driver_Init/init_gdb.o
  .debug_str     0x00001aae      0xb02 ../Build_Result/Driver/Config/DMA/DMA_gdb.o

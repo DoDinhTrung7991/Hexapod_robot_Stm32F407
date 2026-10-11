@@ -277,7 +277,9 @@ bool UART_init(UARTx_t UARTx, uint32_t baudrate_u32)
 			SET_BIT(*RCC_APBxENR_UART_arr[UARTx].reg_u32_ptr, RCC_APBxENR_UART_arr[UARTx].pos);
 			// Enable Interrupt line
 			NVIC_ISER_setVal(UARTx_Interrupt_line[UARTx]);
-
+			// Enable DMA receiver
+			SET_BIT(USART_reg[UARTx]->CR3, 6U);
+		
 			is_Init_done_once[UARTx] = true;
 		}
 		
@@ -369,8 +371,6 @@ bool UART_init(UARTx_t UARTx, uint32_t baudrate_u32)
 		// RXNE interrupt disable
 		CLEAR_BIT(USART_reg[UARTx]->CR1, 5U);
 
-		// Enable DMA receiver
-		SET_BIT(USART_reg[UARTx]->CR3, 6U);
 		// Enable Receiver
 		SET_BIT(USART_reg[UARTx]->CR1, 2U);
 		// Enable Transmitter
@@ -430,9 +430,8 @@ bool UART_Read(UARTx_t UARTx, uint8_t *buf, uint8_t data_length)
 		uint8_t front_temp_u8;
 		uint8_t index_u8 = 0;
 
-		// Disable DMA Stream
-		CLEAR_BIT(DMA_reg[UART_Stream_info_rx_st[UARTx].DMAx]->S[UART_Stream_info_rx_st[UARTx].stream].CR, 0U);
-		while (READ_REG(DMA_reg[UART_Stream_info_rx_st[UARTx].DMAx]->S[UART_Stream_info_rx_st[UARTx].stream].CR, 1UL, 0U));
+		// Disable DMA receiver
+		CLEAR_BIT(USART_reg[UARTx]->CR3, 6U);
 		// Disable Interrupt
 		NVIC_ICER_setVal(UARTx_Interrupt_line[UARTx]);
 
@@ -483,8 +482,8 @@ bool UART_Read(UARTx_t UARTx, uint8_t *buf, uint8_t data_length)
 		UART_recv_buf[UARTx].isFull = false;
 		isUpdated_UART[UARTx] = false;
 
-		//Enable Stream
-		SET_BIT(DMA_reg[UART_Stream_info_rx_st[UARTx].DMAx]->S[UART_Stream_info_rx_st[UARTx].stream].CR, 0U);
+		// Enable DMA receiver
+		SET_BIT(USART_reg[UARTx]->CR3, 6U);
 		// Enable Interrupt
 		NVIC_ISER_setVal(UARTx_Interrupt_line[UARTx]);
 	}
