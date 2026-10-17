@@ -7,9 +7,8 @@ int main(void)
     uint8_t I2C_send_arr[1] = {0x75};
 
     I2C_init(I2C1);
-    GPIO_setup(GPIOEEN, 3, IN, AF0, PP, PU);
-
     I2C_master_send(I2C1, 104, I2C_send_arr, 1);
+    GPIO_setup(GPIOEEN, 3, IN, AF0, PP, PU);
 
     while (1)
     {
@@ -17,7 +16,7 @@ int main(void)
         {
             if (0 == once)
             {
-                I2C_master_recv(I2C1, 104, 2);
+                I2C_master_recv(I2C1, 104, 7);
                 once = 1;
             }
         }

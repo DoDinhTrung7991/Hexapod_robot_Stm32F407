@@ -357,21 +357,31 @@ bool I2C_master_recv(I2Cx_t I2Cx_en, uint8_t addr_u8, uint32_t length_u32)
 
 	buffer_t buffer_info_rx_st = (buffer_t)
 	{
-		.data_length = length_u32 - 2,
+		.data_length = length_u32,
 		.peri_addr = &I2C_reg[I2Cx_en]->DR,
 		.mem_addr = (volatile uint32_t *)I2C_recv_buf[I2Cx_en]
 	};
 
+	if (2 <= length_u32)
+	{
+		// DMA last transfer enable
+    	SET_BIT(I2C_reg[I2Cx_en]->CR2, 12U);
+	}
+	else
+	{
+		// do nothing
+	}
+
+	I2C_length[I2Cx_en] = length_u32;
 	isUpdated_I2C[I2Cx_en] = false;
 	I2C_state_rx[I2Cx_en] = I2C_STATE_BUSY;
-	I2C_length[I2Cx_en] = length_u32;
-	// Clear Buffer interrupt enable
-	CLEAR_BIT(I2C_reg[I2Cx_en]->CR2, 10U);
+
 	// Reset buffer BEFORE starting DMA to avoid race conditions
 	for (unsigned int i = 0; i < sizeof(I2C_recv_buf[I2Cx_en]); i++)
     {
         I2C_recv_buf[I2Cx_en][i] = 0;
     }
+
 	// Write address: LSB = 1 for receiver
 	I2C_addr[I2Cx_en] = ((addr_u8 << 1U) | 1U);
 	// Setup DMA

@@ -366,15 +366,11 @@ void USART1_Handler(void)
 
 void I2C1_EV_Handler(void)
 {
-    static bool isLastByte_I2C[2];
-
     // Check Start bit
     if (READ_REG(I2C_reg[I2C1]->SR1, 1UL, 0U))
     {
         // Write Slave address
         WRITE_REG(I2C_reg[I2C1]->DR, 0xFFUL, 0U, I2C_addr[I2C1]);
-        isLastByte_I2C[0] = true;
-        isLastByte_I2C[1] = false;
     }
 
     // Check Address sent
@@ -382,8 +378,15 @@ void I2C1_EV_Handler(void)
     {
         // Disable Acknowledge if only write/read 1 byte
         if (
-            ((1U == READ_REG(DMA_reg[DMA1]->S[5].NDTR, 0xFFFFU, 0U)) && (I2C_STATE_BUSY == I2C_state_rx[I2C1]))
-            || ((1U == READ_REG(DMA_reg[DMA1]->S[6].NDTR, 0xFFFFU, 0U)) && (I2C_STATE_BUSY == I2C_state_tx[I2C1]))
+            (
+                (1U == I2C_length[I2C1])
+                && (I2C_STATE_BUSY == I2C_state_rx[I2C1])
+            )
+            ||
+            (
+                (1U == READ_REG(DMA_reg[DMA1]->S[6].NDTR, 0xFFFFU, 0U))
+                && (I2C_STATE_BUSY == I2C_state_tx[I2C1])
+            )
         )
         {
             // Clear ACK
@@ -399,28 +402,6 @@ void I2C1_EV_Handler(void)
             // Reset states to READY so the system can try again
             I2C_state_tx[I2C1] = I2C_STATE_READY;
             I2C_state_rx[I2C1] = I2C_STATE_READY;
-        }
-    }
-
-    // Check RxNE
-    if (READ_REG(I2C_reg[I2C1]->SR1, 1UL, 6U))
-    {
-        if ((true == isLastByte_I2C[0]) && (false == isLastByte_I2C[1]))
-        {
-            I2C_recv_buf[I2C1][I2C_length[I2C1] - 2] = READ_REG(I2C_reg[I2C1]->DR, 0xFFU, 0U);
-            isLastByte_I2C[0] = false;
-            isLastByte_I2C[1] = true;
-            // Clear ACK
-            CLEAR_BIT(I2C_reg[I2C1]->CR1, 10U);
-            // Send Stop condition
-            SET_BIT(I2C_reg[I2C1]->CR1, 9U);
-        }
-
-        if ((false == isLastByte_I2C[0]) && (true == isLastByte_I2C[1]))
-        {
-            I2C_recv_buf[I2C1][I2C_length[I2C1] - 1] = READ_REG(I2C_reg[I2C1]->DR, 0xFFU, 0U);
-            I2C_state_rx[I2C1] = I2C_STATE_READY;
-            isUpdated_I2C[I2C1] = true;
         }
     }
 
@@ -509,10 +490,12 @@ void DMA1_Stream0_Handler(void)
 
         if (I2C_STATE_BUSY == I2C_state_rx[I2C1])
         {
-            // Set Buffer interrupt enable
-            SET_BIT(I2C_reg[I2C1]->CR2, 10U);
+            // Send Stop condition
+            SET_BIT(I2C_reg[I2C1]->CR1, 9U);
             // DMA requests disable
             CLEAR_BIT(I2C_reg[I2C1]->CR2, 11U);
+            I2C_state_rx[I2C1] = I2C_STATE_READY;
+            isUpdated_I2C[I2C1] = true;
         }
     }
 
@@ -555,18 +538,22 @@ void DMA1_Stream2_Handler(void)
 
         if (I2C_STATE_BUSY == I2C_state_rx[I2C2])
         {
-            // Set Buffer interrupt enable
-            SET_BIT(I2C_reg[I2C2]->CR2, 10U);
+            // Send Stop condition
+            SET_BIT(I2C_reg[I2C2]->CR1, 9U);
             // DMA requests disable
             CLEAR_BIT(I2C_reg[I2C2]->CR2, 11U);
+            I2C_state_rx[I2C2] = I2C_STATE_READY;
+            isUpdated_I2C[I2C2] = true;
         }
 
         if (I2C_STATE_BUSY == I2C_state_rx[I2C3])
         {
-            // Set Buffer interrupt enable
-            SET_BIT(I2C_reg[I2C3]->CR2, 10U);
+            // Send Stop condition
+            SET_BIT(I2C_reg[I2C3]->CR1, 9U);
             // DMA requests disable
             CLEAR_BIT(I2C_reg[I2C3]->CR2, 11U);
+            I2C_state_rx[I2C3] = I2C_STATE_READY;
+            isUpdated_I2C[I2C3] = true;
         }
     }
 
@@ -590,10 +577,12 @@ void DMA1_Stream3_Handler(void)
 
         if (I2C_STATE_BUSY == I2C_state_rx[I2C2])
         {
-            // Set Buffer interrupt enable
-            SET_BIT(I2C_reg[I2C2]->CR2, 10U);
+            // Send Stop condition
+            SET_BIT(I2C_reg[I2C2]->CR1, 9U);
             // DMA requests disable
             CLEAR_BIT(I2C_reg[I2C2]->CR2, 11U);
+            I2C_state_rx[I2C2] = I2C_STATE_READY;
+            isUpdated_I2C[I2C2] = true;
         }
     }
 
@@ -642,10 +631,12 @@ void DMA1_Stream5_Handler(void)
 
         if (I2C_STATE_BUSY == I2C_state_rx[I2C1])
         {
-            // Set Buffer interrupt enable
-            SET_BIT(I2C_reg[I2C1]->CR2, 10U);
+            // Send Stop condition
+            SET_BIT(I2C_reg[I2C1]->CR1, 9U);
             // DMA requests disable
             CLEAR_BIT(I2C_reg[I2C1]->CR2, 11U);
+            I2C_state_rx[I2C1] = I2C_STATE_READY;
+            isUpdated_I2C[I2C1] = true;
         }
     }
 
