@@ -262,13 +262,6 @@ bool SPI_send_receive(SPIx_t SPIx_en, const uint8_t *str, uint32_t length_u32)
 			.mem_addr = (volatile uint32_t *)str
 		};
 
-		stream_channel_t Stream_info_tx_st =
-		{
-			.DMAx = SPI_Stream_info_tx_st[SPIx_en].DMAx,
-			.stream = SPI_Stream_info_tx_st[SPIx_en].stream,
-			.channel = SPI_Stream_info_tx_st[SPIx_en].channel
-		};
-
 		buffer_t buffer_info_rx_st = (buffer_t)
 		{
 			.data_length = length_u32,
@@ -276,20 +269,13 @@ bool SPI_send_receive(SPIx_t SPIx_en, const uint8_t *str, uint32_t length_u32)
 			.mem_addr = (volatile uint32_t *)SPI_recv_buf[SPIx_en]
 		};
 
-		stream_channel_t Stream_info_rx_st =
-		{
-			.DMAx = SPI_Stream_info_rx_st[SPIx_en].DMAx,
-			.stream = SPI_Stream_info_rx_st[SPIx_en].stream,
-			.channel = SPI_Stream_info_rx_st[SPIx_en].channel
-		};
-
 		// Enable DMA
 		SET_BIT(SPI[SPIx_en]->CR2, 0U); // RXDMAEN bit
 		SET_BIT(SPI[SPIx_en]->CR2, 1U); // TXDMAEN bit
 		// Setup DMA tx
-		DMA_transfer(Stream_info_tx_st, buffer_info_tx_st);
+		DMA_transfer(SPI_Stream_info_tx_st[SPIx_en], buffer_info_tx_st);
 		// Setup DMA rx
-		DMA_transfer(Stream_info_rx_st, buffer_info_rx_st);
+		DMA_transfer(SPI_Stream_info_rx_st[SPIx_en], buffer_info_rx_st);
 		// Enable SPI
         SET_BIT(SPI[SPIx_en]->CR1, 6U); // SPE bit
 	}

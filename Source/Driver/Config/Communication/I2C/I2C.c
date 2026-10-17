@@ -290,18 +290,11 @@ bool I2C_master_send(I2Cx_t I2Cx_en, uint8_t addr_u8, const uint8_t *buf, uint32
 		.mem_addr = (volatile uint32_t *)buf
 	};
 
-	stream_channel_t Stream_info_st =
-	{
-		.DMAx = I2C_Stream_info_tx_st[I2Cx_en].DMAx,
-		.stream = I2C_Stream_info_tx_st[I2Cx_en].stream,
-		.channel = I2C_Stream_info_tx_st[I2Cx_en].channel
-	};
-
 	I2C_state_tx[I2Cx_en] = I2C_STATE_BUSY;
 	// Write address: LSB = 0 for transmitter
 	I2C_addr[I2Cx_en] = (addr_u8 << 1U);
 	// Setup DMA
-	DMA_transfer(Stream_info_st, buffer_info_tx_st);
+	DMA_transfer(I2C_Stream_info_tx_st[I2Cx_en], buffer_info_tx_st);
 	// Ensure ACK is enabled (though primarily needed for RX, it's good practice)
 	SET_BIT(I2C_reg[I2Cx_en]->CR1, 10U);
 	// DMA requests enable
@@ -314,16 +307,25 @@ bool I2C_master_send(I2Cx_t I2Cx_en, uint8_t addr_u8, const uint8_t *buf, uint32
 
 bool I2C_master_recv(I2Cx_t I2Cx_en, uint8_t addr_u8, uint32_t length_u32)
 {
-	if (length_u32 > sizeof(I2C_recv_buf[I2Cx_en]))
-	{
-		return NOT_OK;
-	}
-	else if (NOT_INITTED == I2C_init_state[I2Cx_en])
+	if (NOT_INITTED == I2C_init_state[I2Cx_en])
 	{
 		if (NOT_OK == I2C_init(I2Cx_en))
 		{
 			return NOT_OK;
 		}
+	}
+	else
+	{
+		// do nothing
+	}
+
+	if (length_u32 > sizeof(I2C_recv_buf[I2Cx_en]))
+	{
+		length_u32 = sizeof(I2C_recv_buf[I2Cx_en]);
+	}
+	else if (0 == length_u32)
+	{
+		return NOT_OK;
 	}
 	else
 	{
@@ -360,13 +362,6 @@ bool I2C_master_recv(I2Cx_t I2Cx_en, uint8_t addr_u8, uint32_t length_u32)
 		.mem_addr = (volatile uint32_t *)I2C_recv_buf[I2Cx_en]
 	};
 
-	stream_channel_t Stream_info_st =
-	{
-		.DMAx = I2C_Stream_info_rx_st[I2Cx_en].DMAx,
-		.stream = I2C_Stream_info_rx_st[I2Cx_en].stream,
-		.channel = I2C_Stream_info_rx_st[I2Cx_en].channel
-	};
-
 	isUpdated_I2C[I2Cx_en] = false;
 	I2C_state_rx[I2Cx_en] = I2C_STATE_BUSY;
 	I2C_length[I2Cx_en] = length_u32;
@@ -380,7 +375,7 @@ bool I2C_master_recv(I2Cx_t I2Cx_en, uint8_t addr_u8, uint32_t length_u32)
 	// Write address: LSB = 1 for receiver
 	I2C_addr[I2Cx_en] = ((addr_u8 << 1U) | 1U);
 	// Setup DMA
-	DMA_transfer(Stream_info_st, buffer_info_rx_st);
+	DMA_transfer(I2C_Stream_info_rx_st[I2Cx_en], buffer_info_rx_st);
 	// Ensure ACK is enabled before starting
 	SET_BIT(I2C_reg[I2Cx_en]->CR1, 10U);
 	// DMA requests enable

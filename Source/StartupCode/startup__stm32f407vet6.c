@@ -383,7 +383,7 @@ void I2C1_EV_Handler(void)
         // Disable Acknowledge if only write/read 1 byte
         if (
             ((1U == READ_REG(DMA_reg[DMA1]->S[5].NDTR, 0xFFFFU, 0U)) && (I2C_STATE_BUSY == I2C_state_rx[I2C1]))
-            || ((1U == READ_REG(DMA_reg[DMA1]->S[7].NDTR, 0xFFFFU, 0U)) && (I2C_STATE_BUSY == I2C_state_tx[I2C1]))
+            || ((1U == READ_REG(DMA_reg[DMA1]->S[6].NDTR, 0xFFFFU, 0U)) && (I2C_STATE_BUSY == I2C_state_tx[I2C1]))
         )
         {
             // Clear ACK
